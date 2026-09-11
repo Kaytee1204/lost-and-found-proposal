@@ -14,13 +14,13 @@ Trong trường đại học, ký túc xá, thư viện, phòng lab, trung tâm 
 * Người khác nhặt được nhưng không biết tìm chủ nhân.
 * Thông tin đồ thất lạc được đăng rải rác trên Facebook, Zalo, group chat.
 * Người mất phải đọc hàng loạt bài đăng để tìm đồ của mình.
-* Mô tả bằng văn bản thường không chính xác và không đồng nhất.
+* Mô tả bằng văn bản thường không chính xác.
 
-**Ví dụ thực tế:**
+**Ví dụ:**
 * Người A mất: *“Một chiếc bình nước màu đen.”*
 * Người B nhặt được: *“Tìm thấy bình giữ nhiệt ở phòng 302.”*
 
-Hai người có thể đang nói về cùng một đồ vật, nhưng hệ thống tìm kiếm bằng từ khóa (keyword search) truyền thống rất dễ bỏ sót.
+Hai người có thể đang nói về cùng một đồ vật, nhưng hệ thống tìm kiếm bằng từ khóa (keyword search) có thể không tìm thấy.
 
 ---
 
@@ -31,34 +31,34 @@ Hai người có thể đang nói về cùng một đồ vật, nhưng hệ th�
 
 Hệ thống giải quyết 3 vấn đề chính:
 
-* **Vấn đề 1 — Khó tìm kiếm:** Thông tin đồ thất lạc nằm rải rác ở nhiều kênh khác nhau. Hệ thống tạo ra một nơi lưu trữ và tìm kiếm tập trung.
-* **Vấn đề 2 — Mô tả không chính xác:** Người dùng có thể mô tả *“ví màu đen”* nhưng người nhặt lại đăng *“ví da màu tối”*. Keyword search khó xác định đây là cùng một món đồ.
-* **Vấn đề 3 — Khó xác định đồ vật tương ứng:** Một người có thể tải lên ảnh chiếc ví của mình và muốn biết: *“Trong những đồ đã được tìm thấy, có chiếc nào giống chiếc này không?”* — Đây chính là giá trị cốt lõi của phần AI Matching.
+* **Vấn đề 1 — Khó tìm kiếm:** Thông tin đồ thất lạc nằm rải rác. Hệ thống tạo ra một nơi lưu trữ và tìm kiếm tập trung.
+* **Vấn đề 2 — Mô tả không chính xác:** Người dùng có thể mô tả *“ví màu đen”* nhưng người nhặt lại đăng *“ví da màu tối”*. Keyword search khó xác định đây có thể là cùng một đồ vật.
+* **Vấn đề 3 — Khó xác định đồ vật tương ứng:** Một người có thể upload ảnh chiếc ví của mình và muốn biết: *“Trong những đồ đã được tìm thấy, có chiếc nào giống chiếc này không?”* — Đây chính là phần AI có giá trị.
 
 ---
 
 ## 4. Ý tưởng sản phẩm
 
-Hệ thống quản lý hai loại bài đăng chính:
+Hệ thống có hai loại bài đăng:
 
 ### a. Lost Item (Đồ thất lạc)
-Người mất đồ đăng tải:
+Người mất đồ đăng:
 * Ảnh đồ vật (nếu có)
 * Tên đồ vật
-* Mô tả chi tiết
+* Mô tả
 * Thời gian mất
 * Địa điểm mất
 * Đặc điểm nhận dạng
 
 ### b. Found Item (Đồ nhặt được)
-Người nhặt được đồ đăng tải:
+Người nhặt được đồ đăng:
 * Ảnh đồ vật (chụp hiện trạng)
 * Mô tả
 * Thời gian tìm thấy
 * Địa điểm tìm thấy
 * Đặc điểm đồ vật
 
-Sau đó hệ thống kết nối hai luồng dữ liệu:
+Sau đó hệ thống kết nối hai loại dữ liệu:
 
 ```text
 Lost Item ────┐
@@ -70,11 +70,11 @@ Found Items ──┘
 
 ## 5. Ví dụ workflow thực tế
 
-Giả sử sinh viên A bị mất một chiếc balo trong trường.
+Giả sử sinh viên A mất một chiếc balo.
 
-* **Bước 1 — Đăng đồ thất lạc:** A tải lên ảnh balo, Tên: *Balo*, Màu: *Đen*, Địa điểm: *Library*, Ngày: *08/09/2026*.
-* **Bước 2 — Người khác tìm thấy:** Sinh viên B nhặt được balo tại thư viện và đăng: Ảnh balo, Tên: *Balo*, Địa điểm: *Library*, Ngày: *08/09/2026*.
-* **Bước 3 — AI Matching:** Hệ thống tự động so khớp và phát hiện:
+* **Bước 1 — Đăng đồ thất lạc:** A upload ảnh balo, Tên: *Balo*, Màu: *Đen*, Địa điểm: *Library*, Ngày: *08/09/2026*.
+* **Bước 2 — Một người khác tìm thấy:** Sinh viên B đăng ảnh balo, Tên: *Balo*, Địa điểm: *Library*, Ngày: *08/09/2026*.
+* **Bước 3 — AI Matching:** Hệ thống phát hiện:
   ```text
   Possible Match:
   Lost Item #102  <=======>  Found Item #387
@@ -82,58 +82,73 @@ Giả sử sinh viên A bị mất một chiếc balo trong trường.
   - Location: Same (Library)
   - Date: Same (08/09/2026)
   ```
-* **Bước 4 — Người mất xem kết quả:** Hệ thống hiển thị thông báo: *“Có khả năng đây là đồ vật bạn đã mất”*. Sau đó người dùng có thể gửi yêu cầu nhận lại đồ (Claim).
+* **Bước 4 — Người mất xem kết quả và gửi Claim:** Hệ thống hiển thị: *“Có khả năng đây là đồ vật bạn đã mất”*. A bấm **Claim Item** và gửi kèm thông tin xác minh (Ví dụ: *“Trong ngăn trước balo có một chiếc USB màu xanh”*).
+* **Bước 5 — Người nhặt đối chiếu & Hai người tự trao đổi:**
+  * B xem thông tin xác minh của A. Thấy đúng, B bấm **Chấp nhận (Approve)**.
+  * Hệ thống mở kênh nhắn tin trực tiếp giữa A và B.
+  * Hai bên tự trao đổi, hẹn gặp tại địa điểm thuận tiện để trao trả đồ luôn mà không cần chờ Admin can thiệp.
+* **Bước 6 — Hoàn tất trao trả:** Sau khi nhận lại đồ, người đăng bài đánh dấu **Đã nhận lại đồ (Returned)** để đóng bài đăng.
 
 ---
 
 ## 6. Các Actor trong hệ thống
 
 ### Actor 1 — User (Người dùng)
-Có thể vừa là người mất đồ, vừa là người nhặt được đồ. Không cần tách riêng thành *Lost Person* và *Finder* vì một người dùng có thể đóng cả hai vai trò tại các thời điểm khác nhau.
+Có thể vừa là người mất đồ, vừa là người nhặt được đồ. Không cần tách thành *Lost Person* và *Finder* vì một người có thể đóng cả hai vai trò.
+* Đăng tin đồ thất lạc / đồ nhặt được.
+* Tìm kiếm theo từ khóa hoặc hình ảnh.
+* Xem danh sách gợi ý tương đồng từ AI.
+* Gửi Claim kèm thông tin xác minh quyền sở hữu.
+* Đối chiếu thông tin xác minh của người khác gửi đến (nếu mình là người nhặt).
+* Nhắn tin trực tiếp giữa hai bên để hẹn gặp trao trả đồ.
 
 ### Actor 2 — Admin (Quản trị viên)
-Quản lý tổng thể:
-* Quản lý bài đăng
-* Quản lý tài khoản người dùng
-* Xác minh và duyệt yêu cầu nhận đồ (Claim)
-* Xử lý báo cáo vi phạm
-* Theo dõi dữ liệu thống kê hệ thống
+* Quản lý bài đăng và người dùng trên hệ thống.
+* **Không làm trung gian duyệt từng claim** (để hai người dùng tự xác minh và trao trả trực tiếp cho nhau, giúp hệ thống không bị chậm trễ hay quá tải).
+* **Chỉ can thiệp khi có tranh chấp/báo cáo:** Xử lý các báo cáo vi phạm (report) khi có hành vi gian lận hoặc tranh chấp, khóa tài khoản vi phạm.
+* Quản lý dữ liệu và theo dõi thống kê hệ thống.
 
 ---
 
 ## 7. Các chức năng chính
 
 ### Module 1 — Đăng ký / Đăng nhập
-* Đăng ký tài khoản (Register)
-* Đăng nhập (Login) / Đăng xuất (Logout)
-* Cập nhật thông tin cá nhân (Update profile)
+User:
+* Register (Đăng ký)
+* Login (Đăng nhập)
+* Logout (Đăng xuất)
+* Update profile (Cập nhật thông tin cá nhân)
 
 ### Module 2 — Đăng đồ thất lạc (Lost Item)
-* **Input:** Loại đồ vật, Tên đồ vật, Hình ảnh, Mô tả, Màu sắc, Địa điểm mất, Thời gian mất, Đặc điểm nhận dạng thêm.
+* **Input:** Item type, Item name, Image, Description, Color, Lost location, Lost date/time, Additional characteristics.
   * *Ví dụ:* Name: `Black Backpack` | Color: `Black` | Location: `Library` | Date: `08/09/2026` | Description: `Black backpack with a small red keychain.`
-* **Output:** Bài đăng tạo thành công (Ví dụ: `Post ID: L102` | Status: `Searching`).
+* **Output:** Lost item posted successfully (`Post ID: L102` | Status: `Searching`).
 
 ### Module 3 — Đăng đồ tìm thấy (Found Item)
-* **Input:** Hình ảnh chụp hiện trạng, Mô tả, Địa điểm tìm thấy, Thời gian tìm thấy, Đặc điểm đồ vật.
-* **Output:** Bài đăng tạo thành công (Ví dụ: `Post ID: F387` | Status: `Waiting for owner`).
+* **Input:** Image, Description, Found location, Found date/time, Item characteristics.
+* **Output:** Found item posted (`Post ID: F387` | Status: `Waiting for owner`).
 
 ### Module 4 — Tìm kiếm đồ vật
-Người dùng có thể tìm kiếm linh hoạt theo 3 cách:
-* **Cách 1 — Text:** Tìm theo từ khóa (Ví dụ: `black backpack`).
-* **Cách 2 — Image:** Tải ảnh lên để tìm đồ tương đồng trực quan.
+Người dùng có thể tìm bằng:
+* **Cách 1 — Text:** Nhập từ khóa (Ví dụ: `black backpack`).
+* **Cách 2 — Image:** Upload ảnh (Ví dụ: `[Ảnh balo]`).
 * **Cách 3 — Kết hợp:** Tìm kiếm kết hợp `Image + Location + Date`.
+
+### Module 5 — Trao đổi & Xác minh trực tiếp giữa 2 người
+* Gửi yêu cầu nhận đồ (Claim Item) kèm câu trả lời xác minh chi tiết ẩn.
+* Người nhặt đối chiếu và phản hồi (Approve / Reject / Request info).
+* Nhắn tin nội bộ trực tiếp giữa hai người để hẹn gặp trao trả đồ.
 
 ---
 
 ## 8. Chức năng AI quan trọng nhất: Image Similarity Matching
 
-Hệ thống nhận ảnh truy vấn (*Query Image*), sau đó so sánh với các ảnh trong cơ sở dữ liệu:
-
+Hệ thống nhận ảnh truy vấn (*Query Image*), sau đó tìm trong cơ sở dữ liệu:
 ```text
-Query Image ──> [ So khớp với Image 1, Image 2, ..., Image N ] ──> Tính độ tương đồng
+Query Image ──> [ Image 1, Image 2, Image 3, ..., Image N ] ──> Tính mức độ tương đồng
 ```
 
-**Kết quả gợi ý (Output):**
+**Output ví dụ:**
 ```text
 Possible Matches:
 1. Found Item #387 ── Similarity: 94%
@@ -143,31 +158,38 @@ Possible Matches:
 
 ---
 
-## 9. Định hướng tiếp cận AI: Không làm quá phức tạp
+## 9. AI không nên làm quá nhiều
 
-Hệ thống **không cần tự xây dựng hay nghiên cứu một mô hình nhận diện mới từ đầu**. Thay vào đó, tận dụng các mô hình trích xuất đặc trưng có sẵn (*Pretrained Model*):
+Không cần tự xây một mô hình nhận diện mọi đồ vật trên thế giới. Thay vào đó có thể sử dụng image embedding / model có sẵn.
 
+**Pipeline xử lý:**
 ```text
-Image ──> Pretrained Model ──> Image Embedding ──> Vector Similarity ──> Ranking ──> Possible Matches
+Image ──> Pretrained Vision Model ──> Image Embedding ──> Vector Similarity ──> Ranking ──> Possible Matches
 ```
 
-* **Mô hình tham khảo:** CLIP, MobileNet, ResNet hoặc các mô hình image embedding phổ biến.
-* **Trọng tâm:** Tập trung vào xây dựng hệ thống matching và ứng dụng web hoàn chỉnh, không phải nghiên cứu thuật toán học sâu mới.
+* **Ví dụ dùng:** CLIP, MobileNet, ResNet hoặc các image embedding model có sẵn.
+* **Định hướng:** Tập trung vào xây dựng hệ thống matching, không phải nghiên cứu một model Computer Vision mới.
 
 ---
 
 ## 10. Không nên chỉ dựa vào AI (Multi-factor Matching)
 
-Nếu chỉ dựa vào hình ảnh, hệ thống có thể gặp lỗi gợi ý sai:
-* Ví dụ: AI trả về độ tương đồng ảnh là **92%**, nhưng một món đồ rơi ở *Hà Nội* còn món đồ nhặt được ở *Đà Nẵng*. Rõ ràng không nên gợi ý chúng ngang hàng nhau.
+Đây là điểm có thể làm đề tài tốt hơn.
 
-Vì vậy, hệ thống kết hợp đa yếu tố:
-* **Image similarity** (Độ tương đồng hình ảnh)
-* **Location similarity** (Độ gần về địa điểm)
-* **Time similarity** (Độ gần về thời gian)
-* **Text similarity** (Độ tương đồng tên và mô tả)
+Ví dụ AI cho:
+* Image similarity = 92%
 
-**Ví dụ tính điểm tổng hợp:**
+Nhưng hai đồ vật:
+* Một cái được tìm thấy ở *Hà Nội*.
+* Một cái được tìm thấy ở *Đà Nẵng*.
+
+Rõ ràng không nên recommend chúng ngang nhau. Vì vậy hệ thống kết hợp đa yếu tố:
+* Image similarity
+* Location similarity
+* Time similarity
+* Text similarity
+
+**Ví dụ tính điểm:**
 
 | Tiêu chí | Điểm thành phần |
 | :--- | :---: |
@@ -177,13 +199,13 @@ Vì vậy, hệ thống kết hợp đa yếu tố:
 | Text similarity | 80 |
 | **Final Match Score** | **93.4%** |
 
-Cách tiếp cận này vừa sức thực hiện nhưng đem lại hiệu quả thực tế rất cao.
+Đây là một điểm rất tốt về mặt kỹ thuật nhưng vẫn vừa sức thực hiện.
 
 ---
 
-## 11. Chức năng xếp hạng kết quả (Ranking Engine)
+## 11. Chức năng xếp hạng kết quả
 
-Thay vì chỉ trả lời cứng nhắc “Có” hoặc “Không”, hệ thống đóng vai trò như một công cụ tìm kiếm thu nhỏ, trả về danh sách sắp xếp theo độ tương đồng giảm dần:
+Thay vì chỉ trả kết quả cứng nhắc: *“Có / Không”*, hệ thống trả về danh sách được xếp hạng:
 
 ```text
 Most Likely Matches:
@@ -192,98 +214,108 @@ Most Likely Matches:
 3. Item #291 ── Match: 79%
 ```
 
+Điều này tạo thành một search engine nhỏ cho đồ thất lạc.
+
 ---
 
 ## 12. Chức năng xem chi tiết đồ vật
 
-Khi người dùng bấm vào một món đồ trong danh sách gợi ý (Ví dụ: `Item #387`), hệ thống hiển thị đầy đủ:
-* Hình ảnh
-* Mô tả chi tiết
+Khi người dùng click vào một món đồ (Ví dụ: `Item #387`), hệ thống hiển thị:
+* Ảnh đồ vật
+* Mô tả
 * Địa điểm tìm thấy
 * Ngày tìm thấy
-* Các đặc điểm nhận dạng
-* Điểm tương đồng (Similarity Score)
-* Trạng thái hiện tại của đồ vật
+* Đặc điểm nhận dạng
+* Similarity score
+* Trạng thái hiện tại
 
 ---
 
 ## 13. Chức năng gửi yêu cầu nhận đồ (Claim Item)
 
-Người dùng không thể chỉ bấm một nút *“Đây là đồ của tôi”* rồi lấy đồ. Thay vào đó, khi bấm **Claim Item**, người dùng phải cung cấp thông tin xác minh quyền sở hữu:
+Người dùng không nên chỉ click: *“Đây là đồ của tôi”*. Thay vào đó, người mất bấm **Claim Item** và phải cung cấp thông tin xác minh quyền sở hữu:
 
 * *Ví dụ:* “Trong balo có một chiếc USB màu xanh” hoặc “Móc khóa hình con mèo màu đỏ”.
-* **Kết quả:** Claim được gửi lên hệ thống với trạng thái: `Waiting for verification`.
+* **Output:** Claim submitted. Status: `Waiting for finder verification`.
 
 ---
 
-## 14. Admin xác minh yêu cầu
+## 14. Hai bên tự xác minh & Trao đổi trực tiếp (Không qua Admin duyệt)
 
-Admin đóng vai trò người kiểm duyệt để đảm bảo tính minh bạch:
+Để hệ thống vận hành nhanh chóng và không tạo nút thắt cổ chai cho Admin:
 
 ```text
-Lost Item ──> Found Item ──> Claim ──> Verification (Admin kiểm tra)
+Người mất gửi Claim ──> Người nhặt kiểm tra thông tin ──> Chấp nhận ──> Kích hoạt Chat trực tiếp
 ```
 
-Admin có thể:
-* **Approve:** Chấp thuận yêu cầu nhận lại đồ.
-* **Reject:** Từ chối yêu cầu nếu thông tin xác minh không khớp.
-* **Request more information:** Yêu cầu người nhận cung cấp thêm bằng chứng chứng minh.
+1. **Người nhặt xem thông tin xác minh:** Người nhặt đối chiếu câu trả lời của người mất với đồ vật thực tế đang giữ.
+2. **Người nhặt phản hồi:**
+   * **Approve (Chấp nhận):** Nếu thông tin xác minh trùng khớp.
+   * **Reject (Từ chối):** Nếu thông tin xác minh sai.
+   * **Request more information:** Nếu muốn người mất cung cấp thêm chi tiết để chắc chắn.
+3. **Hai bên tự trao đổi và trao trả:**
+   * Khi người nhặt bấm **Approve**, hệ thống lập tức mở luồng chat trực tiếp giữa hai bên.
+   * Hai người tự nhắn tin hẹn thời gian, địa điểm gặp mặt để trao trả đồ luôn.
+   * **Admin không can thiệp vào từng giao dịch.** Admin chỉ đóng vai trò phân xử khi một trong hai bên gửi báo cáo (Report) gian lận hoặc tranh chấp.
 
 ---
 
-## 15. Quản lý trạng thái đồ vật (State Management)
+## 15. Quản lý trạng thái đồ vật
 
-Đồ vật trong hệ thống được quản lý qua các trạng thái rõ ràng:
+Đồ vật trong hệ thống có các trạng thái:
 * `LOST`: Đang thất lạc, đang tìm kiếm.
-* `FOUND`: Đang nhặt được, chờ chủ nhân.
-* `MATCHED`: Đã tìm thấy các đối tượng tương đồng tiềm năng.
-* `CLAIM_PENDING`: Đang có người gửi yêu cầu nhận lại đồ, chờ xác minh.
-* `RETURNED`: Đã xác minh và trao trả thành công cho chủ nhân.
-* `CLOSED`: Bài đăng đã đóng / hoàn tất.
+* `FOUND`: Đã nhặt được, đang chờ chủ nhân.
+* `MATCHED`: Đã tìm thấy các đối tượng tương đồng.
+* `CLAIM_PENDING`: Đang có người gửi yêu cầu nhận lại đồ, chờ người nhặt đối chiếu.
+* `IN_DISCUSSION`: Người nhặt đã đồng ý, hai bên đang trao đổi để hẹn trả đồ.
+* `RETURNED`: Đã trao trả thành công cho chủ nhân.
+* `CLOSED`: Bài đăng hoàn tất / Đã đóng.
 
-Cơ chế này giúp đề tài trở thành một sản phẩm quản lý hoàn chỉnh (*Product*), không chỉ dừng lại ở một demo tìm kiếm ảnh đơn thuần.
-
----
-
-## 16. Giới hạn phạm vi của AI
-
-Đề tài cam kết rõ ràng trong proposal:
-* **Không cam kết:** Nhận diện chính xác 100% đồ vật hoặc tự động khẳng định danh tính chủ nhân món đồ (ví dụ AI không tự khẳng định: *“Đây là balo của bạn Nguyễn Văn A”*).
-* **Cam kết thực hiện:** Tìm kiếm, so khớp và xếp hạng các hình ảnh trong cơ sở dữ liệu có mức độ tương đồng cao nhất với hình ảnh truy vấn. Quyết định xác minh cuối cùng vẫn thuộc về con người (người dùng và admin).
+Điều này giúp hệ thống trở thành một product hoàn chỉnh, thay vì chỉ là công cụ tìm kiếm ảnh.
 
 ---
 
-## 17. Bộ dữ liệu thử nghiệm (Dataset để test)
+## 16. Phạm vi AI nên giới hạn
 
-Xây dựng một bộ dataset nhỏ phục vụ kiểm thử thực nghiệm cho đồ án:
-* **Quy mô:** Khoảng 10–20 loại đồ vật phổ biến (balo, ví, bình nước, dù, tai nghe, điện thoại, laptop, mắt kính, chìa khóa, sổ tay...).
-* **Số lượng:** Mỗi loại thu thập 30–50 ảnh ở các góc chụp và điều kiện ánh sáng khác nhau.
-* **Kiểm thử:** Tạo các cặp ảnh *Same Item* (cùng một món đồ) và *Different Item* (hai món đồ khác nhau) để đánh giá độ chính xác của thuật toán so khớp.
+Đây là phần đặc biệt quan trọng cần ghi rõ trong proposal:
+* **Không cam kết:** Nhận diện chính xác đồ vật hoặc tự khẳng định ai là chủ nhân món đồ (Ví dụ AI không nhất thiết phải biết: *“Đây là chiếc balo của Nguyễn Văn A”*).
+* **Cam kết thực hiện:** Tìm kiếm và xếp hạng các hình ảnh có mức độ tương đồng cao với hình ảnh truy vấn (Ví dụ AI chỉ cần biết: *“Ảnh này tương đồng cao với ảnh Found Item #387”*).
 
----
-
-## 18. Phương pháp đánh giá AI (Evaluation)
-
-Khả năng gợi ý và matching của hệ thống được đánh giá qua các chỉ số định lượng cụ thể:
-
-* **Top-1 Accuracy:** Tỉ lệ món đồ đúng nằm ngay ở vị trí đầu tiên trong danh sách đề xuất.
-* **Top-5 Accuracy:** Tỉ lệ món đồ đúng xuất hiện trong top 5 kết quả đầu tiên.
-* **Precision@K:** Đo lường có bao nhiêu kết quả trong K vị trí đầu thực sự liên quan.
-
-*Ví dụ mục tiêu thử nghiệm:* Với 100 ảnh truy vấn (query images), đạt **Top-1 Accuracy $\ge$ 75%** và **Top-5 Accuracy $\ge$ 90%**. Đây là kết quả định lượng rõ ràng, rất thuyết phục khi trình bày báo cáo.
+Quyết định xác minh và trao trả cuối cùng hoàn toàn thuộc về người dùng đối chất với nhau.
 
 ---
 
-## 19. Những chức năng KHÔNG làm (Out of Scope)
+## 17. Dataset để test
 
-Để đảm bảo tính khả thi và đúng tiến độ đồ án, hệ thống kiên quyết không làm các chức năng sau:
-* Không làm nhận diện khuôn mặt người (Face Recognition).
-* Không tích hợp camera giám sát realtime.
-* Không làm object tracking phức tạp qua video.
-* Không để AI tự động phán quyết chủ nhân món đồ.
-* Không tích hợp mạng xã hội bên ngoài (Facebook, TikTok) hay crawler dữ liệu tự do trên Internet.
-* Không làm đồng thời cả Mobile App và Web App (tập trung làm tốt Web App).
-* Không tự huấn luyện mô hình thị giác máy tính từ đầu.
+Có thể tạo dataset nhỏ phục vụ kiểm thử đồ án:
+* **Quy mô:** Khoảng 10–20 loại đồ vật phổ biến (backpack, wallet, bottle, umbrella, headphones, phone, laptop, glasses, keys, notebook...).
+* **Số lượng:** Mỗi loại từ 30–50 ảnh ở các góc chụp khác nhau.
+* **Kiểm thử:** Tạo các cặp ảnh *Same Item* và *Different Item* để kiểm tra khả năng matching của mô hình.
+
+---
+
+## 18. Đánh giá AI như thế nào?
+
+Đây là điểm rất quan trọng vì AI recommendation/matching phải có đánh giá định lượng:
+* **Top-1 Accuracy:** Trong kết quả đầu tiên có phải đúng đồ vật không?
+* **Top-5 Accuracy:** Trong 5 kết quả đầu tiên có đồ vật đúng không?
+* **Precision@K:** Có bao nhiêu kết quả được trả về là relevant?
+
+*Ví dụ mục tiêu thử nghiệm:* Với 100 query images, đạt **Top-1 Accuracy = 78%** và **Top-5 Accuracy = 91%**. Đây là kết quả rất dễ trình bày và thuyết phục trong báo cáo.
+
+---
+
+## 19. Những chức năng KHÔNG nên làm (Out of Scope)
+
+Để đồ án đúng trọng tâm và khả thi:
+* Nhận diện khuôn mặt (Face Recognition).
+* Camera realtime.
+* Object tracking qua video.
+* AI tự động xác định chủ nhân.
+* Tích hợp Facebook / TikTok.
+* Crawler toàn Internet.
+* Làm cả Mobile App + Web App cùng lúc (chỉ tập trung Web App).
+* Tự train model Computer Vision từ đầu.
 
 ---
 
@@ -291,6 +323,6 @@ Khả năng gợi ý và matching của hệ thống được đánh giá qua c�
 
 | Phân hệ | Các chức năng chính |
 | :--- | :--- |
-| **Người dùng (User)** | - Đăng ký / Đăng nhập / Cập nhật hồ sơ.<br>- Đăng tin đồ thất lạc (Lost Item).<br>- Đăng tin đồ nhặt được (Found Item).<br>- Tìm kiếm bằng văn bản, bằng hình ảnh hoặc kết hợp.<br>- Xem kết quả matching và xem chi tiết đồ vật.<br>- Gửi yêu cầu nhận lại đồ (Claim Item) kèm thông tin xác minh.<br>- Theo dõi trạng thái đồ vật. |
-| **Trí tuệ nhân tạo (AI Engine)** | - Trích xuất đặc trưng hình ảnh (Image Embedding) từ Pretrained Model.<br>- Tính toán độ tương đồng vector (Image Similarity).<br>- Kết hợp đa yếu tố: Ảnh + Địa điểm + Thời gian + Văn bản (Multi-factor Matching).<br>- Xếp hạng danh sách kết quả phù hợp nhất (Ranking). |
-| **Quản trị viên (Admin)** | - Quản lý danh sách bài đăng.<br>- Kiểm tra thông tin xác minh và xử lý yêu cầu nhận đồ (Approve / Reject / Request info).<br>- Quản lý và cập nhật trạng thái đồ vật.<br>- Xử lý báo cáo vi phạm.<br>- Dashboard thống kê dữ liệu hệ thống. |
+| **Người dùng (User)** | - Đăng ký / Đăng nhập / Cập nhật hồ sơ.<br>- Đăng đồ thất lạc (Lost Item).<br>- Đăng đồ tìm thấy (Found Item).<br>- Tìm kiếm bằng text, bằng hình ảnh hoặc kết hợp.<br>- Xem kết quả matching và chi tiết đồ vật.<br>- Gửi Claim kèm thông tin xác minh.<br>- **Người nhặt tự đối chiếu xác minh Claim (Approve / Reject / Request info).**<br>- **Hai bên trực tiếp chat trao đổi và hẹn gặp trao trả đồ.**<br>- Cập nhật trạng thái đồ vật (`RETURNED`).<br>- Gửi báo cáo (Report) khi có tranh chấp hoặc gian lận. |
+| **Trí tuệ nhân tạo (AI)** | - Image embedding (từ model có sẵn).<br>- Image similarity.<br>- Multi-factor matching (Ảnh + Địa điểm + Thời gian + Văn bản).<br>- Ranking xếp hạng danh sách gợi ý. |
+| **Quản trị viên (Admin)** | - Quản lý bài đăng.<br>- Quản lý người dùng.<br>- **Không duyệt từng claim thủ công.**<br>- Tiếp nhận và xử lý báo cáo vi phạm (Report) khi có tranh chấp.<br>- Quản lý dữ liệu và Dashboard thống kê hệ thống. |
