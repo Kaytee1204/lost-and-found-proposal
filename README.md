@@ -1,438 +1,298 @@
-# lost-and-found-proposal
+# Hệ thống tìm kiếm đồ thất lạc bằng hình ảnh
 
-Dưới đây là toàn bộ nội dung tài liệu đề tài đã được chuẩn hóa và cập nhật đầy đủ, đồng nhất 100% theo đúng quy trình: **Xác thực bằng câu hỏi riêng $\rightarrow$ Hai bên tự trao đổi $\rightarrow$ Admin chỉ can thiệp xử lý khi có báo cáo tranh chấp/gian lận**.
+> **Web-Based Lost and Found Search and Image Matching System**  
+> Đề tài giải pháp nền tảng web hỗ trợ tìm kiếm đồ thất lạc kết hợp mô hình thị giác máy tính (Computer Vision), tìm kiếm ngữ nghĩa đa phương thức (Multimodal Matching) và cơ chế đối soát quyền sở hữu bảo mật phi tập trung (Decentralized Verification).
 
 ---
-
-# Hệ thống tìm kiếm đồ thất lạc bằng hình ảnh
 
 ## 1. Tên đề tài
 
 * **Tên tiếng Việt:** Hệ thống tìm kiếm đồ thất lạc bằng hình ảnh
-
-
 * **Tên tiếng Anh:** Web-Based Lost and Found Search and Image Matching System
-
-
+* **Môi trường triển khai mục tiêu:** Khuôn viên trường đại học, ký túc xá, thư viện, tòa nhà công cộng, khu phức hợp.
 
 ---
 
 ## 2. Lý do chọn đề tài
 
-Trong trường đại học, ký túc xá, thư viện, phòng lab, trung tâm thương mại và các khu vực công cộng thường xảy ra tình trạng:
+Tại các môi trường tập trung đông người như trường đại học, ký túc xá, thư viện và các khu vực sinh hoạt chung, tình trạng thất lạc đồ diễn ra với tần suất cao và thường gặp các bất cập sau:
 
-* Sinh viên/người dùng đánh mất đồ.
+1. **Thông tin phân tán và dễ trôi bài:**
+   * Thông tin tìm đồ bị rải rác trên nhiều hội nhóm mạng xã hội (Facebook Group, Zalo, diễn đàn sinh viên).
+   * Bài đăng nhanh chóng bị trôi sau vài giờ, người mất tốn rất nhiều thời gian lội tìm thủ công và thường xuyên bỏ sót tin.
 
+2. **Mô tả ngữ nghĩa không đồng nhất (Semantic Gap):**
+   * *Người mất mô tả:* "Một chiếc ví da màu đen gập đôi."
+   * *Người nhặt mô tả:* "Nhặt được ví nam màu tối rơi ở phòng 302."
+   * Việc tìm kiếm chỉ dựa vào từ khóa chính xác (exact keyword search) rất dễ bỏ sót kết quả dù cả hai đang mô tả cùng một món đồ.
 
-* Người khác nhặt được nhưng không biết cách tìm chủ nhân.
+3. **Khó khăn trong việc xác thực trực quan:**
+   * Người mất thường có sẵn hình ảnh đồ vật cũ (ảnh kỷ niệm, hóa đơn, ảnh từng chụp), nhưng không có công cụ tự động đối chiếu hình ảnh này với kho dữ liệu các món đồ đã được nhặt.
 
+4. **Nút thắt cổ chai trong phê duyệt (Administrative Bottleneck):**
+   * Các hệ thống truyền thống thường bắt buộc quản trị viên (Admin) hoặc bảo vệ phải kiểm tra và xác minh thủ công từng món đồ, gây quá tải, chậm trễ và không thể mở rộng quy mô.
 
-* Thông tin đồ thất lạc bị phân tán trên Facebook, Zalo, group chat hoặc các kênh liên lạc rời rạc.
-
-
-* Người mất phải tốn thời gian lội qua hàng loạt bài đăng để tìm kiếm.
-
-
-* Mô tả bằng văn bản giữa người mất và người nhặt thường không đồng nhất.
-
-
-
-**Ví dụ:**
-
-* Người A mất: *"Một chiếc ví da màu đen."*
-
-* Người B nhặt được: *"Tìm thấy một chiếc ví màu tối ở phòng 302."*
-
-
-Cả hai người có thể đang nhắc về cùng một đồ vật, nhưng việc tìm kiếm chỉ dựa trên keyword đơn thuần rất dễ bỏ sót kết quả. Ngoài ra, người mất thường có sẵn hình ảnh đồ vật của mình và cần đối chiếu xem trong các đồ vật nhặt được có món nào tương đồng hay không.
-
-Vì vậy, hệ thống được xây dựng nhằm hỗ trợ người dùng **tìm kiếm đồ thất lạc bằng văn bản, hình ảnh và thông tin ngữ cảnh**, đồng thời xếp hạng các kết quả tiềm năng nhất để người dùng xác minh.
+Vì vậy, đề tài đề xuất xây dựng một hệ thống tập trung hỗ trợ người dùng **tìm kiếm đồ thất lạc đa phương thức (kết hợp hình ảnh, văn bản, không gian và thời gian)**, đồng thời áp dụng **quy trình đối soát quyền sở hữu bằng câu hỏi riêng tư do hai bên tự thực hiện**.
 
 ---
 
 ## 3. Vấn đề mà đề tài giải quyết
 
 **Bài toán cốt lõi:**
-
-> *Làm thế nào để người dùng có thể tìm kiếm và xác định các đồ vật có khả năng tương ứng dựa trên hình ảnh, văn bản và thông tin ngữ cảnh thay vì chỉ dựa vào từ khóa rời rạc?*
-> 
+> *Làm thế nào để người dùng có thể tìm kiếm, xác định và nhận lại đồ thất lạc với độ chính xác cao dựa trên hình ảnh, ngữ nghĩa văn bản và ngữ cảnh (thời gian, địa điểm), đồng thời đảm bảo tính an toàn, bảo mật và ngăn ngừa gian lận?*
 
 Hệ thống tập trung giải quyết 3 vấn đề chính:
 
 ### Vấn đề 1 — Thông tin phân tán, khó tìm kiếm
+Cung cấp một nền tảng tập trung duy nhất để chuẩn hóa dữ liệu:
+* Đăng tin đồ thất lạc (*Lost Item*).
+* Đăng tin đồ nhặt được (*Found Item*).
+* Tự động gợi ý danh sách ứng viên tiềm năng (Candidate List) có độ trùng khớp cao nhất.
 
-Cung cấp một nền tảng tập trung duy nhất để người dùng:
+### Vấn đề 2 — Khoảng cách ngữ nghĩa trong mô tả
+Người dùng có thói quen diễn đạt khác nhau. Hệ thống kết hợp chuẩn hóa các trường thông tin danh mục (Category, Color, Metadata) và áp dụng **Text Semantic Embedding** để hiểu được sự tương đồng về nghĩa thay vì chỉ so khớp ký tự rời rạc.
 
-* Đăng thông tin đồ thất lạc (Lost Item).
-
-
-* Đăng thông tin đồ nhặt được (Found Item).
-
-
-* Tìm kiếm, lọc và nhận gợi ý kết quả tương đồng.
-
-
-* Thực hiện xác minh quyền sở hữu và hẹn nhận lại đồ trực tiếp.
-
-
-
-### Vấn đề 2 — Mô tả ngữ nghĩa không đồng nhất
-
-Người dùng có thói quen dùng từ khác nhau khi miêu tả (ví dụ: *"ví đen"* vs *"ví da tối màu"*). Hệ thống kết hợp chuẩn hóa các trường thông tin:
-
-* Tên đồ vật (Item name).
-
-
-* Danh mục (Category).
-
-
-* Màu sắc (Color).
-
-
-* Mô tả chi tiết (Description).
-
-
-* Đặc điểm nhận dạng (Identifying characteristics).
-
-
-
-Nhờ đó, công cụ hỗ trợ cả **keyword search** lẫn **text similarity**.
-
-### Vấn đề 3 — Khó xác thực và tìm kiếm trực quan
-
-Người mất có ảnh đồ vật muốn đối chiếu trực quan với kho dữ liệu đồ nhặt được. Hệ thống tích hợp **Image Matching**, trích xuất vector đặc trưng để xếp hạng mức độ tương đồng và đề xuất các ứng viên tiềm năng (candidates).
+### Vấn đề 3 — Khó xác thực và đối chiếu trực quan
+Ứng dụng mô hình nền tảng thị giác (Vision-Language Model) để trích xuất vector đặc trưng hình ảnh, hỗ trợ tìm kiếm bằng ảnh (Image-to-Image Search) và tìm kiếm chữ - ảnh (Text-to-Image Search).
 
 ---
 
-## 4. Ý tưởng sản phẩm
+## 4. Ý tưởng sản phẩm & Luồng dữ liệu
 
-Hệ thống quản lý hai luồng dữ liệu chính:
+Hệ thống quản lý hai luồng dữ liệu chính với quy tắc bảo mật thông tin rõ ràng:
 
 ### a. Lost Item (Đồ thất lạc)
-
 Người mất đăng tải:
-
-* Hình ảnh (nếu có).
-
-
-* Tên đồ vật, Danh mục, Màu sắc.
-
-
-* Thời gian, địa điểm thất lạc.
-
-
-* Mô tả và đặc điểm nhận dạng.
-
-
+* **Hình ảnh:** Ảnh chụp đồ vật trước đó (nếu có, không bắt buộc).
+* **Thông tin phân loại:** Tên đồ vật, Danh mục, Màu sắc chủ đạo.
+* **Ngữ cảnh thất lạc:** Thời gian đánh rơi, Địa điểm thất lạc (Tòa nhà, Phòng/Khu vực).
+* **Mô tả chi tiết:** Các đặc điểm nhận dạng bên ngoài.
 
 ### b. Found Item (Đồ nhặt được)
-
 Người nhặt đăng tải:
-
-* Hình ảnh chụp hiện trạng đồ vật.
-
-
-* Tên đồ vật, Danh mục, Màu sắc.
-
-
-* Thời gian, địa điểm nhặt được.
-
-
-* Mô tả tổng quan bên ngoài.
-
-
-* **Lưu ý bảo mật:** Người nhặt được khuyến nghị *không công khai các chi tiết ẩn quan trọng* (như nội dung bên trong ví, số seri, móc khóa bên trong ngăn phụ) để dùng làm bằng chứng đối chất khi có người gửi yêu cầu nhận lại đồ.
+* **Hình ảnh hiện trạng:** Ảnh chụp thực tế đồ vật nhặt được (bắt buộc).
+* **Thông tin phân loại:** Tên đồ vật, Danh mục, Màu sắc.
+* **Ngữ cảnh nhặt được:** Thời gian nhặt, Địa điểm nhặt được.
+* **Mô tả tổng quan bên ngoài:** Chỉ mô tả các đặc điểm có thể nhận thấy bên ngoài.
+* **Câu hỏi xác thực bí mật (Private Verification):** Người nhặt thiết lập một câu hỏi kiểm tra về chi tiết ẩn mà chỉ chủ sở hữu thực sự mới biết.  
+  * *Nguyên tắc bảo mật:* Người nhặt **không công khai các chi tiết ẩn quan trọng** (như số seri, hình nền điện thoại, đồ vật bên trong ngăn kéo phụ, thông tin giấy tờ kẹp bên trong) để dùng làm căn cứ đối chất khi có người gửi yêu cầu nhận lại đồ (Claim).
 
 ---
 
-## 5. Workflow thực tế
+## 5. Quy trình nghiệp vụ thực tế (Workflow)
 
-Giả sử sinh viên A bị mất một chiếc balo trong trường.
+Quy trình vận hành khép kín gồm 8 bước từ khi đăng tin đến khi hoàn tất bàn giao:
 
-### Bước 1 — Đăng đồ thất lạc
+```
+[Người mất A] Đăng Lost Item (#L102)
+                     │
+                     ▼
+[Người nhặt B] Đăng Found Item (#F387) + Thiết lập câu hỏi xác thực ẩn
+                     │
+                     ▼
+       HỆ THỐNG AI MATCHING & DYNAMIC HYBRID RANKING
+   (Tiền xử lý cắt vật thể + So khớp Đa phương thức + Ngữ cảnh)
+                     │
+                     ▼
+[Hệ thống] Gợi ý danh sách Top-K Candidates cho A
+                     │
+                     ▼
+[A kiểm tra Candidate #F387] Gửi Claim & Trả lời câu hỏi xác thực bí mật
+                     │
+                     ▼
+[B đối chiếu câu trả lời]
+       ├── [Sai / Khác biệt] ──> Bấm REJECT (Hủy claim; áp dụng rate-limit nếu cố tình đoán mò)
+       └── [Đúng / Trùng khớp] ──> Bấm ACCEPT
+                     │
+                     ▼
+        KÍCH HOẠT PHIÊN CHAT NỘI BỘ
+   (Gợi ý địa điểm bàn giao an toàn: Bàn bảo vệ / Thư viện)
+                     │
+                     ▼
+               GẶP MẶT TRAO TRẢ
+       ├── [Thành công] ──> Đánh dấu RETURNED & Đóng bài (CLOSED)
+       └── [Có tranh chấp/Gian lận] ──> Gửi REPORT kèm bằng chứng ──> ADMIN xử lý
+```
 
-A tạo bài đăng:
-
-* **Tên:** Black Backpack
-
-
-* **Category:** Backpack | **Màu:** Black
-
-
-* **Địa điểm:** University Library | **Ngày:** 08/09/2026
-
-
-* **Mô tả:** *"Black backpack with a small red cat-shaped keychain attached to the zipper. There is a small scratch near the left side."*
-
-* **Hệ thống tạo:** Lost Item `#L102` (Status: `LOST`)
-
-
-
-### Bước 2 — Người khác đăng đồ nhặt được
-
-Sinh viên B nhặt được balo tại thư viện và đăng:
-
-* **Tên:** Black Backpack
-
-
-* **Category:** Backpack | **Màu:** Black
-
-
-* **Địa điểm:** University Library | **Ngày:** 08/09/2026
-
-
-* **Mô tả bên ngoài:** *"Black backpack with a red cat-shaped keychain. Found near the second-floor reading area."*
-
-* **Hệ thống tạo:** Found Item `#F387` (Status: `FOUND`)
-
-
-
-### Bước 3 — AI Matching tự động
-
-Hệ thống sử dụng mô hình embedding (như CLIP) để vector hóa ảnh và thông tin của `#F387`, tự động so khớp và gợi ý cho A các candidate tương đồng nhất:
-
-1. Found Item `#F387` — Image Similarity: 0.92
-
-
-2. Found Item `#F412` — Image Similarity: 0.83
-
-
-3. Found Item `#F291` — Image Similarity: 0.76
-
-
-
-### Bước 4 — Hybrid Ranking
-
-Kết hợp đa yếu tố theo trọng số:
-
-
-$$\text{Final Score} = 0.60 \times \text{Image} + 0.15 \times \text{Text} + 0.15 \times \text{Location} + 0.10 \times \text{Time}$$
-
-
-$\rightarrow$ Found Item `#F387` đạt Match Score: **0.928** (Xếp hạng Top-1 Candidate).
-
-### Bước 5 — Người dùng chọn Candidate
-
-A duyệt danh sách gợi ý, xem chi tiết bài đăng `#F387` và nhận thấy hình ảnh cũng như thời gian/địa điểm trùng khớp với đồ của mình.
-
-### Bước 6 — Xác thực bằng câu hỏi riêng (Private Verification)
-
-A bấm **Claim Item**. Để chứng minh quyền sở hữu, A phải trả lời câu hỏi xác thực hoặc cung cấp đặc điểm bảo mật ẩn mà chỉ chủ sở hữu thực sự mới biết:
-
-* *Câu hỏi từ người nhặt (hoặc form xác thực):* *"Trong ngăn trước/bên trong balo có chứa đồ vật gì đặc biệt?"*
-* *A cung cấp câu trả lời:* *"Trong ngăn kéo phía trước có một chiếc USB SanDisk màu xanh và một thẻ giữ xe số 42."*
-* **Hệ thống tạo:** Claim `#C501` (Trạng thái: `PENDING_VERIFICATION`).
-
-### Bước 7 — Kiểm tra câu hỏi & Hai bên tự trao đổi
-
-Người nhặt (B) nhận thông báo và đối chiếu câu trả lời:
-
-* **Nếu Sai:** B bấm **Từ chối (Reject/Decline)** $\rightarrow$ Hệ thống hủy claim, bảo vệ tài sản khỏi việc nhận nhầm hoặc gian lận.
-* **Nếu Đúng:** B bấm **Chấp nhận (Accept)** $\rightarrow$ Hệ thống lập tức kích hoạt luồng **Chat nội bộ** giữa hai người.
-* Hai bên tự nhắn tin trao đổi chi tiết, hẹn thời gian và địa điểm an toàn trong khuôn viên để gặp mặt trao trả đồ.
-
-### Bước 8 — Hoàn tất trao trả & Xử lý báo cáo (nếu có)
-
-* **Trường hợp thành công:** Sau khi gặp mặt và nhận lại đồ, người đăng bài đánh dấu **Hoàn tất (Returned)** $\rightarrow$ Bài đăng chuyển thành `CLOSED`.
-
-
-* **Trường hợp có gian lận / tranh chấp:** Nếu trong quá trình trao đổi phát sinh hành vi vòi tiền chuộc, mạo danh, quấy rối hoặc không chịu trả:
-1. Người dùng gửi **Báo cáo (Report)** kèm lịch sử chat và bằng chứng vi phạm.
-2. **Admin tiếp nhận xử lý:** Kiểm tra lịch sử hệ thống, áp dụng chế tài cảnh cáo hoặc khóa tài khoản vi phạm vĩnh viễn.
-
-
+### Chi tiết kịch bản:
+* **Bước 1 — Đăng đồ thất lạc:** Sinh viên A đánh rơi balo và tạo bài đăng `#L102` (Trạng thái: `LOST`).
+* **Bước 2 — Người khác đăng đồ nhặt được:** Sinh viên B nhặt được balo tại thư viện và đăng bài `#F387` (Trạng thái: `FOUND`), kèm ảnh và câu hỏi ẩn: *"Trong ngăn khóa phụ phía trước có những đồ vật gì?"*.
+* **Bước 3 — AI Matching tự động:** Hệ thống tiền xử lý ảnh (cắt vùng vật thể), trích xuất vector đặc trưng và so khớp với kho dữ liệu đồ vật.
+* **Bước 4 — Dynamic Hybrid Ranking:** Thuật toán tính điểm tương đồng tổng hợp dựa trên ảnh, văn bản, địa điểm và thời gian. Bài `#F387` đạt điểm cao nhất và được gợi ý cho A ở vị trí Top-1.
+* **Bước 5 — A gửi Claim:** A xem ảnh bài `#F387`, nhận thấy balo của mình và bấm **Claim Item**. A trả lời câu hỏi: *"Trong ngăn khóa phụ có một USB màu đỏ và một thẻ gửi xe số 42"*.
+* **Bước 6 — B đối soát & kích hoạt Chat:** B nhận câu trả lời, đối chiếu với balo thực tế thấy chính xác. B bấm **Chấp nhận (Accept)**. Hệ thống lập tức mở kênh chat nội bộ giữa A và B.
+* **Bước 7 — Trao đổi và hẹn gặp:** Hai bên nhắn tin hẹn gặp tại một điểm an toàn trong trường (ví dụ: Bàn trực bảo vệ sảnh A) để trao trả.
+* **Bước 8 — Hoàn tất trao trả & Xử lý báo cáo (nếu có):**
+  * *Trường hợp thành công:* A nhận lại đồ, bài đăng chuyển thành `RETURNED` và chuyển sang `CLOSED`.
+  * *Trường hợp phát sinh gian lận:* Nếu đối phương có hành vi vòi tiền chuộc hoặc chiếm giữ trái phép, người dùng bấm **Báo cáo (Report)** kèm lịch sử chat để Admin xử lý kỷ luật.
 
 ---
 
 ## 6. Vai trò của các Actor
 
-### Actor 1 — User (Người dùng)
-
-Một người dùng có thể đồng thời là người mất đồ hoặc người nhặt được đồ.
-
-* Quản lý tài khoản cá nhân.
-
-
-* Đăng tải bài viết Lost Item và Found Item.
-
-
-* Tìm kiếm theo từ khóa, hình ảnh hoặc tìm kiếm kết hợp (Hybrid).
-
-
-* Xem danh sách Candidate được AI đề xuất.
-
-
+### Actor 1 — User (Người dùng / Sinh viên)
+Một người dùng có thể đóng vai trò người mất hoặc người nhặt:
+* Quản lý tài khoản và xác minh danh tính qua email trường đại học.
+* Đăng tải và quản lý các bài viết Lost Item và Found Item.
+* Tìm kiếm đồ vật theo từ khóa, tải ảnh tìm kiếm hoặc lọc theo thời gian, địa điểm.
+* Xem danh sách ứng viên (Candidates) do AI gợi ý.
 * Gửi Claim và trả lời câu hỏi xác thực quyền sở hữu.
-* Đối chiếu câu trả lời xác thực của người claim (nếu là người nhặt).
-* Nhắn tin (Chat) nội bộ trực tiếp giữa hai bên để hẹn gặp trao trả đồ.
-* Xác nhận hoàn tất trả đồ hoặc gửi Báo cáo vi phạm (Report) khi có tranh chấp.
+* Đối soát câu trả lời xác thực của người khác gửi đến (nếu là người nhặt).
+* Nhắn tin trực tiếp qua luồng chat nội bộ khi yêu cầu được chấp thuận.
+* Đánh dấu hoàn tất trao trả hoặc gửi Báo cáo vi phạm (Report) khi có tranh chấp.
 
 ### Actor 2 — Admin (Quản trị viên)
-
-* Quản lý tài khoản người dùng và nội dung bài đăng.
-
-
-* Theo dõi số liệu thống kê hoạt động hệ thống.
-
-
-* **Không làm trung gian duyệt từng claim** và không can thiệp quyết định quyền sở hữu tài sản.
-
-
-* **Chỉ can thiệp khi có tranh chấp:** Tiếp nhận và xử lý các Report vi phạm, đối soát lịch sử tin nhắn, khóa bài đăng hoặc khóa tài khoản vi phạm chính sách.
-
-
+* Quản lý tài khoản người dùng và giám sát nội dung đăng tải.
+* Theo dõi thống kê hoạt động của hệ thống (tỷ lệ ghép nối thành công, thời gian xử lý trung bình).
+* **Không làm trung gian duyệt từng claim** (giúp hệ thống mở rộng quy mô, không bị nghẽn).
+* **Chỉ can thiệp khi có tranh chấp:** Tiếp nhận và xử lý Report, đối soát lịch sử tin nhắn và câu hỏi xác thực, áp dụng chế tài cảnh cáo hoặc khóa vĩnh viễn tài khoản vi phạm.
 
 ---
 
 ## 7. Các chức năng chính của hệ thống
 
-1. **Quản lý người dùng:** Đăng ký, đăng nhập, bảo mật thông tin tài khoản.
-
-
-2. **Đăng tin Lost / Found:** Nhập dữ liệu phân loại, hình ảnh, thời gian, vị trí và thiết lập câu hỏi/thông tin xác thực riêng tư.
-
-
-3. **Tìm kiếm đa phương thức:**
-* Text search qua tên, danh mục, màu sắc, mô tả.
-
-
-* Image search qua ảnh truy vấn.
-
-
-* Hybrid search kết hợp ảnh, từ khóa, không gian và thời gian.
-
-
-
-
-4. **Hệ thống AI Matching & Ranking:** Tự động đề xuất danh sách Top-K candidates phù hợp nhất.
-
-
-5. **Cơ chế Private Verification (Câu hỏi riêng):** Cho phép người mất nhập câu trả lời xác thực bí mật để người nhặt đối chiếu.
-6. **Hệ thống Chat nội bộ User-to-User:** Kênh trao đổi riêng tư chỉ mở khi câu hỏi xác thực được chấp thuận.
-7. **Module Báo cáo & Quản trị:** Cho phép người dùng report hành vi xấu và cung cấp công cụ để Admin kiểm duyệt, khóa tài khoản.
-
-
+1. **Quản lý người dùng & Định danh:** Đăng ký, đăng nhập, phân quyền và xác minh tài khoản người dùng nội bộ trường.
+2. **Đăng tin Lost / Found chuẩn hóa:** Biểu mẫu nhập liệu phân loại rõ ràng (tên, danh mục, màu sắc, vị trí, thời gian) và thiết lập câu hỏi bảo mật riêng tư.
+3. **Tìm kiếm đa phương thức (Multimodal Search):**
+   * Tìm kiếm theo từ khóa / ngữ nghĩa mô tả.
+   * Tìm kiếm bằng hình ảnh truy vấn (Image Search).
+   * Lọc kết hợp đa chiều (Hybrid Filter) theo không gian và thời gian.
+4. **Hệ thống AI Matching & Ranking:** Tự động đề xuất danh sách Top-K candidates phù hợp nhất khi có bài đăng mới.
+5. **Cơ chế Private Verification (Câu hỏi riêng):** Quản lý luồng gửi - duyệt câu trả lời bí mật, tích hợp chống dò đoán tự động.
+6. **Hệ thống Chat nội bộ User-to-User:** Kênh trao đổi riêng tư chỉ mở khi câu hỏi xác thực được chấp thuận, tích hợp gợi ý điểm hẹn an toàn.
+7. **Module Báo cáo & Quản trị (Trust & Moderation):** Cơ chế khiếu nại, xem xét bằng chứng và xử lý tài khoản vi phạm chính sách.
 
 ---
 
-## 8. Kiến trúc AI & Image Matching
+## 8. Kiến trúc AI & Mô hình Matching
 
-* **Không tự train mô hình Vision từ đầu:** Tận dụng **Pretrained Vision Model** hiện đại (ví dụ: CLIP, MobileNet, ResNet) để trích xuất đặc trưng hình ảnh (Image Embeddings).
-
-
-* **Vector Similarity Search:** Lưu trữ và tìm kiếm vector tương đồng (Cos-similarity) trên cơ sở dữ liệu vector để trích xuất Top-K candidate.
-
-
-* **Multi-factor Hybrid Ranking:** Tránh phụ thuộc hoàn toàn vào thị giác máy tính bằng cách kết hợp:
-* Image Similarity
-
-
-* Text Similarity (So khớp tên, màu sắc, danh mục)
-
-
-* Location Similarity (Độ gần về địa lý)
-
-
-* Time Similarity (Độ gần về mốc thời gian mất/nhặt)
-
-
-
-
+### 8.1. Nguyên lý trích xuất đặc trưng đa phương thức
+* **Không tự huấn luyện mô hình từ đầu:** Tận dụng **Pretrained Vision-Language Foundation Model** (như CLIP / Multilingual CLIP) để trích xuất vector đặc trưng ngữ nghĩa (Embeddings).
+* **Không gian tiềm ẩn đồng nhất (Shared Latent Space):** Mô hình ánh xạ cả hình ảnh và văn bản mô tả (hỗ trợ tiếng Việt) vào cùng một không gian vector đa chiều, cho phép tính toán độ tương đồng trực tiếp giữa:
+  * Ảnh với Ảnh (Image-to-Image Similarity).
+  * Chữ với Ảnh (Text-to-Image Similarity).
+* **Tiền xử lý cắt vật thể (Object RoI Cropping):** Ảnh người dùng chụp thực tế thường chứa nhiều nhiễu nền (mặt sàn, bàn học, người xung quanh). Hệ thống áp dụng mô hình nhận diện vật thể nhẹ để xác định khung bao (Bounding Box) của đồ vật và cắt lấy vùng trọng tâm trước khi đưa vào mô hình trích xuất đặc trưng.
 
 ---
 
-## 9. Quản lý trạng thái (State Management)
+### 8.2. Thuật toán Dynamic Hybrid Ranking
 
-* **Trạng thái của Item:**
-* `LOST`: Đang thất lạc.
+Để tránh phụ thuộc hoàn toàn vào thị giác máy tính và xử lý được trường hợp **người mất không có sẵn ảnh**, hệ thống áp dụng cơ chế tính điểm thích ứng (*Dynamic Weight Fallback*):
 
+#### Trường hợp 1: Bài đăng có hình ảnh
+$$\text{Final Score} = 0.50 \times S_{\text{image}} + 0.20 \times S_{\text{text}} + 0.15 \times S_{\text{location}} + 0.15 \times S_{\text{time}}$$
 
-* `FOUND`: Đang chờ tìm chủ nhân.
+#### Trường hợp 2: Bài đăng không có hình ảnh
+$$\text{Final Score} = 0.50 \times S_{\text{text}} + 0.30 \times S_{\text{location}} + 0.20 \times S_{\text{time}}$$
 
+---
 
-* `RETURNED`: Đã trao trả thành công.
+### 8.3. Hàm chuẩn hóa khoảng cách Không gian & Thời gian
 
+* **Độ tương đồng hình ảnh ($S_{\text{image}}$) & văn bản ($S_{\text{text}}$):** Tính theo độ tương đồng Cosine giữa hai vector đặc trưng:
+  $$S = \cos(\vec{u}, \vec{v}) = \frac{\vec{u} \cdot \vec{v}}{\|\vec{u}\| \|\vec{v}\|}$$
 
+* **Độ tương đồng không gian ($S_{\text{location}}$):** Chuẩn hóa theo phân cấp vị trí khuôn viên:
+  $$S_{\text{location}} = \begin{cases} 
+  1.0 & \text{Trùng phòng học / Khu vực cụ thể} \\
+  0.8 & \text{Cùng tòa nhà} \\
+  0.5 & \text{Cùng phân khu / Khuôn viên (Campus)} \\
+  0.1 & \text{Khác khuôn viên}
+  \end{cases}$$
+
+* **Độ tương đồng thời gian ($S_{\text{time}}$):** Sử dụng hàm suy giảm theo số ngày chênh lệch $\Delta t = |t_{\text{lost}} - t_{\text{found}}|$:
+  $$S_{\text{time}} = \exp(-\lambda \cdot \Delta t) \quad (\text{với } \lambda = 0.15)$$
+
+---
+
+## 9. Cơ chế An toàn, Bảo mật & Chống gian lận (Trust & Safety)
+
+1. **Định danh người dùng qua Email trường học:**
+   * Bắt buộc hoặc ưu tiên xác thực tài khoản qua email sinh viên/nhân viên trường (`@*.edu.vn`). Giúp truy xuất trách nhiệm khi có hành vi sai trái và triệt tiêu 90% nguy cơ tài khoản ảo lừa đảo.
+2. **Cơ chế chống dò đoán đáp án (Anti-Brute Force):**
+   * Giới hạn mỗi tài khoản chỉ được gửi tối đa **3 lượt Claim / ngày**.
+   * Mỗi vật phẩm chỉ được phép gửi **1 lượt Claim trong vòng 24 giờ** đối với cùng một người dùng.
+   * Nếu người dùng nhập sai liên tiếp nhiều lần, hệ thống tạm khóa chức năng Claim của tài khoản đó.
+3. **Cơ chế hết hạn yêu cầu tự động (Claim Time-To-Live):**
+   * Nếu người nhặt không phản hồi sau **72 giờ**, hệ thống tự động hủy Claim và giải phóng trạng thái để tránh việc yêu cầu bị treo vô thời hạn (*Ghosting*).
+4. **Điểm hẹn bàn giao an toàn (Safe Exchange Points):**
+   * Khi kích hoạt phiên chat, hệ thống chủ động gợi ý các điểm gặp mặt an toàn có bảo vệ hoặc camera trong khuôn viên (ví dụ: Bàn trực bảo vệ cổng chính, Quầy thủ thư thư viện, Văn phòng Đoàn trường).
+5. **Ghi vết lịch sử tin nhắn phục vụ giải quyết khiếu nại (Audit Log):**
+   * Lưu trữ lịch sử tin nhắn trong phiên chat để Admin làm căn cứ đối soát khi nhận được Report về các hành vi tống tiền chuộc đồ hoặc quấy rối.
+
+---
+
+## 10. Quản lý trạng thái (State Management)
+
+### a. Trạng thái của Bài đăng (Item)
+* `LOST`: Tin đồ thất lạc đang tìm kiếm.
+* `FOUND`: Tin đồ nhặt được đang chờ chủ nhân.
+* `RETURNED`: Đã xác nhận trao trả lại đồ thành công.
 * `CLOSED`: Bài đăng kết thúc / Đã đóng.
 
-
-
-
-* **Trạng thái của Claim:**
+### b. Trạng thái của Yêu cầu nhận lại (Claim)
 * `PENDING_VERIFICATION`: Đang chờ người nhặt đối chiếu câu trả lời xác thực.
-* `REJECTED`: Câu trả lời xác thực không khớp.
-* `IN_DISCUSSION`: Xác thực đúng, hai bên đang trong phiên chat trao đổi.
-* `RESOLVED`: Đã nhận lại đồ thành công.
-* `REPORTED`: Đang có báo cáo tranh chấp / gian lận.
-
-
+* `REJECTED`: Câu trả lời không khớp, người nhặt từ chối.
+* `IN_DISCUSSION`: Xác thực đúng, hệ thống mở phiên chat trao đổi giữa hai bên.
+* `RESOLVED`: Đã gặp mặt và nhận lại đồ thành công.
+* `REPORTED`: Đang có báo cáo tranh chấp / nghi vấn gian lận.
+* `EXPIRED`: Yêu cầu hết hạn do quá thời gian chờ phản hồi.
 
 ---
 
-## 10. Đánh giá hiệu năng AI (Evaluation)
+## 11. Đánh giá hiệu năng AI & Phương pháp kiểm nghiệm (Evaluation)
 
-Hệ thống đo lường hiệu quả mô hình gợi ý candidate bằng tập dữ liệu thực nghiệm kiểm thử:
+Hệ thống được đánh giá định lượng bằng bộ dữ liệu thực nghiệm kiểm thử trong môi trường khuôn viên trường học:
 
 * **Top-1 Accuracy:** Tỉ lệ đồ vật chính xác nằm ngay vị trí đầu tiên trong danh sách đề xuất.
-
-
 * **Top-5 Accuracy:** Tỉ lệ đồ vật chính xác nằm trong nhóm 5 kết quả đầu tiên.
-
-
-* **Precision@K:** Đo lường mật độ các kết quả thực sự liên quan trong K vị trí đầu.
-
-
-* **A/B Testing đối soát:** So sánh hiệu quả giữa Image Only vs Hybrid Search (Image + Text + Context) để chứng minh tính ưu việt của việc kết hợp đa yếu tố.
-
-
+* **Precision@K & Mean Reciprocal Rank (MRR):** Đo lường độ chính xác và vị trí xếp hạng trung bình của các kết quả thực sự liên quan.
+* **Thực nghiệm đối soát (Ablation Study):** So sánh hiệu quả giữa các phương pháp để chứng minh tính ưu việt của mô hình:
+  * *Mô hình A (Baseline):* Chỉ tìm kiếm theo từ khóa văn bản thuần túy.
+  * *Mô hình B:* Chỉ so khớp bằng hình ảnh (Image-Only Similarity).
+  * *Mô hình C (Đề xuất):* So khớp kết hợp đa yếu tố (**Dynamic Hybrid Ranking**).
 
 ---
 
-## 11. Giới hạn phạm vi đề tài (Scope Constraints)
+## 12. Giới hạn phạm vi đề tài (Scope Constraints)
 
-Để đồ án khả thi và đúng trọng tâm kỹ thuật:
+Để đề tài đảm bảo tính khả thi cao, đúng trọng tâm kỹ thuật và hoàn thành đúng tiến độ:
 
-* **Không** triển khai nhận diện khuôn mặt người (Face Recognition).
-
-
-* **Không** tích hợp camera giám sát realtime hoặc object tracking phức tạp.
-
-
-* **Không** để AI tự động quyết định ai là chủ nhân món đồ.
-
-
-* **Không** crawler dữ liệu tự do từ mạng xã hội (Facebook/TikTok).
-
-
-* Tập trung hoàn thiện kiến trúc nền tảng Web-based tối ưu trải nghiệm tìm kiếm, matching và giải quyết claim trực tiếp giữa người dùng.
-
-
+* **Không** triển khai nhận diện khuôn mặt người (Face Recognition) để tôn trọng quyền riêng tư.
+* **Không** tích hợp camera giám sát thời gian thực hoặc bài toán theo dõi vật thể diện rộng (Realtime Object Tracking).
+* **Không** để AI tự động phán quyết ai là chủ nhân món đồ (AI chỉ đóng vai trò hỗ trợ gợi ý ứng viên; quyết định cuối cùng dựa trên sự đối chất thông tin giữa hai bên).
+* **Không** thu thập (crawl) dữ liệu tự do từ các nền tảng mạng xã hội bên ngoài.
+* **Tập trung:** Hoàn thiện giải pháp nền tảng tập trung tối ưu trải nghiệm tìm kiếm đa phương thức, thuật toán xếp hạng tương đồng và quy trình hoàn trả an toàn trực tiếp giữa người dùng.
 
 ---
 
-## 12. Sơ đồ tổng quan luồng hệ thống
+## 13. Sơ đồ tổng quan luồng hệ thống
 
 ```text
                         NGƯỜI DÙNG ĐĂNG TIN
                    (Ảnh + mô tả: Mất / Nhặt được)
                                 │
                                 ▼
-                       AI MATCHING TỰ ĐỘNG
-                    (CLIP embedding + Xếp hạng)
+                       TIỀN XỬ LÝ & AI MATCHING
+                    (Cắt vật thể + Embedding đa phương thức)
+                                │
+                                ▼
+                      DYNAMIC HYBRID RANKING
+                  (Ảnh + Text + Vị trí + Thời gian)
                                 │
                                 ▼
                      NGƯỜI DÙNG CHỌN CANDIDATE
-                       (Từ danh sách gợi ý)
+                       (Từ danh sách Top-K gợi ý)
                                 │
                                 ▼
                     XÁC THỰC BẰNG CÂU HỎI RIÊNG
-                     (Chỉ chủ sở hữu mới biết)
+                    (Chống Brute-force & Giới hạn lượt)
                                 │
                         ┌───────┴───────┐
                  (Sai)  │               │ (Đúng)
                         ▼               ▼
                      TỪ CHỐI     HAI BÊN TỰ TRAO ĐỔI
-                                (Chat, hẹn gặp trả đồ)
+                   (REJECTED)     (Chat tại điểm hẹn an toàn)
                                         │
                         ┌───────────────┴───────────────┐
           (Hoàn tất)    │                               │ (Có tranh chấp)
@@ -442,6 +302,5 @@ Hệ thống đo lường hiệu quả mô hình gợi ý candidate bằng tập
                                                         │
                                                         ▼
                                                ADMIN XỬ LÝ BÁO CÁO
-                                          (Xem lịch sử, khoá tài khoản)
-
+                                          (Xem lịch sử chat, khóa tài khoản)
 ```
