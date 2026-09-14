@@ -1,18 +1,13 @@
-# Virtual Environment
-venv/
-env/
-ENV/
-.venv/
+# AI Models & Weights
+*.pt
+*.pth
+*.onnx
+*.bin
 
-# Python Cache
-__pycache__/
-*.py[cod]
-*.class
+# Project Data & Cache (nếu thư mục này chứa ảnh upload hoặc dữ liệu demo lớn)
+lost_found_data/
+*.pkl
+*.npy
 
-# IDE / Editor
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
+# Streamlit local credentials / cache
+.streamlit/
