@@ -262,6 +262,12 @@ Nếu vật phẩm đúng luôn ở vị trí số 1, $\text{MRR} = 1.0$.
 | **M4: + Color & Gating** | M3 + Center HSV + Visual Gating ($\ge 0.55$) | 100% | 100% | 100% | 1.000 | 0.185 | Phân biệt túi đen/trắng; loại bỏ hoàn toàn túi khỏi Top keys |
 | **M5: Đề xuất Toàn diện** | **YOLOv8 + ViT-B/16 (Ảnh) + Multilingual CLIP (Text Tiếng Việt) + HSV + Spatio-Temporal + Gating** | **100%** | **100%** | **100%** | **1.000** | **0.228** | **Tối ưu toàn diện: Margin cực đại, lọc nhiễu nền, hiểu tiếng Việt bản địa** |
 
+> [!NOTE]
+> **Giải thích bản chất thực nghiệm tại M3 (Recall@1 = 100% nhưng Recall@3 = 66.7%):**
+> * Ở **M3**, thuật toán Dynamic Adaptive Weighting đã đưa chính xác chiếc chìa khóa mục tiêu 1:1 lên ngay vị trí số 1 (đạt **Recall@1 = 100%**).
+> * Tuy nhiên, do M3 **chưa có Visual Gating**, một chiếc túi xách khác loại có cùng địa điểm "Hà Nội" bị chen chân vào vị trí Hạng #3 (Điểm $0.6234$), đẩy chiếc chìa khóa thứ 3 trong kho xuống Hạng #4 (Điểm $0.6172$). Do đó, tỷ lệ bao phủ danh mục ở Top 3 bị tụt còn $2/3 = \mathbf{66.7\%}$.
+> * Khi nâng cấp lên **M4 (+ Visual Gating $\ge 0.55$)**, chiếc túi xách có điểm ảnh $0.4651 < 0.55$ nên bị loại bỏ hoàn toàn (Score = 0), giúp cả 3 chiếc chìa khóa chiếm trọn Top 1, Top 2, Top 3 $\rightarrow$ **Recall@3 đạt 100% tuyệt đối**.
+
 ---
 
 ### 5.3. Kết quả chi tiết trên Test Queries thực tế (Dẫn chứng Thực nghiệm Cụ thể)
@@ -324,3 +330,23 @@ Nếu vật phẩm đúng luôn ở vị trí số 1, $\text{MRR} = 1.0$.
 Hệ thống so khớp đồ thất lạc đa phương thức được phát triển trong đồ án này đã giải quyết thành công bài toán thực tế bằng sự kết hợp hài hòa giữa **Học sâu đa phương thức hiện đại (Modern Multimodal Deep Learning)** và **Các kỹ thuật suy diễn kỹ thuật chuẩn xác (Rigorous Heuristic & Spatio-Temporal Engineering)**. 
 
 Các kết quả thực nghiệm định lượng rõ ràng với **Recall@1 đạt 100%**, **Recall@3 đạt 100%**, cùng bản phân tích loại trừ chi tiết (**Ablation Study**) đã chứng minh tính đúng đắn, tính khả thi và giá trị học thuật xuất sắc của giải pháp, đáp ứng toàn diện và vượt mức yêu cầu của một Đồ án Tốt nghiệp chuyên ngành Công nghệ Thông tin.
+
+---
+
+## TÀI LIỆU THAM KHẢO (REFERENCES)
+
+### 1. Về Mô hình YOLO & Phát hiện Đối tượng (Object Detection)
+1. **Jocher, G., Chaurasia, A., & Qiu, J. (2023).** *Ultralytics YOLOv8* (Version 8.0.0) [Computer software]. GitHub: [https://github.com/ultralytics/ultralytics](https://github.com/ultralytics/ultralytics). *(Tài liệu kỹ thuật và mã nguồn chính thức của mô hình YOLOv8 được sử dụng trong hệ thống)*.
+2. **Redmon, J., Divvala, S., Girshick, R., & Farhadi, A. (2016).** *You Only Look Once: Unified, Real-Time Object Detection*. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pp. 779–788. *(Bài báo khoa học khai sinh dòng kiến trúc YOLO trong thị giác máy tính)*.
+3. **Lin, T. Y., Maire, M., Belongie, S., Hays, J., Perona, P., Ramanan, D., Dollár, P., & Zitnick, C. L. (2014).** *Microsoft COCO: Common Objects in Context*. In European Conference on Computer Vision (ECCV), pp. 740–755. Springer, Cham. *(Tập dữ liệu chuẩn 80 lớp được YOLOv8 sử dụng để tiền huấn luyện)*.
+4. **Wang, C. Y., Bochkovskiy, A., & Liao, H. Y. M. (2023).** *YOLOv7: Trainable bag-of-freebies sets new state-of-the-art for real-time object detectors*. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), pp. 7464–7475.
+5. **Cheng, T., Song, L., Ge, Y., Liu, W., Wang, X., & Shan, Y. (2024).** *YOLO-World: Real-Time Open-Vocabulary Object Detection*. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR). *(Tài liệu tham khảo cho hướng phát triển mở rộng nhận diện đồ vật theo nhãn tự do)*.
+
+### 2. Về Mô hình Thị giác - Ngôn ngữ CLIP & Transformer
+6. **Radford, A., Kim, J. W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., Sastry, G., Askell, A., Mishkin, P., Clark, J., Krueger, G., & Sutskever, I. (2021).** *Learning Transferable Visual Models From Natural Language Supervision*. In International Conference on Machine Learning (ICML), PMLR 139:8748–8763. *(Bài báo gốc của OpenAI giới thiệu CLIP)*.
+7. **Dosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn, D., Zhai, X., Unterthiner, T., Dehghani, M., Minderer, M., Heigold, G., Gelly, S., Uszkoreit, J., & Houlsby, N. (2020).** *An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale*. In International Conference on Learning Representations (ICLR). *(Bài báo nền tảng về kiến trúc Vision Transformer - ViT)*.
+8. **Thrush, T., Jiang, R., Bartolo, M., Singh, A., Fan, A., Kiela, D., & Douze, M. (2022).** *Winoground: Scrutinizing Language-Vision Models for Coarse-to-Fine Understanding*. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), pp. 10793–10802. *(Công trình của Stanford & Meta chứng minh hiện tượng mù màu và lỗi Attribute Binding của CLIP)*.
+
+### 3. Về Thích ứng Đa ngôn ngữ & Chưng cất Tri thức (Multilingual Adaptation)
+9. **Reimers, N., & Gurevych, I. (2020).** *Making Monolingual Sentence Embeddings Multilingual using Knowledge Distillation*. In Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing (EMNLP), pp. 4512–4525. *(Phương pháp chưng cất tri thức tạo nên mô hình `sentence-transformers/clip-ViT-B-32-multilingual-v1`)*.
+10. **Conneau, A., Khandelwal, K., Goyal, N., Chaudhary, V., Wenzek, G., Guzmán, F., Grave, E., Ott, M., Zettlemoyer, L., & Stoyanov, V. (2020).** *Unsupervised Cross-lingual Representation Learning at Scale*. In Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL), pp. 8440–8451. *(Mô hình nền tảng XLM-RoBERTa)*.

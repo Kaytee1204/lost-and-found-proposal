@@ -68,7 +68,7 @@
 1. User điền form + upload ảnh
 2. System validate dữ liệu bắt buộc
 3. System upload ảnh lên storage
-4. System gọi embedding service tính CLIP vector
+4. System gọi embedding service: Tiền xử lý YOLOv8 Smart Crop + Trích xuất đặc trưng thị giác (CLIP ViT-B/16, 512D) + Trích xuất mô tả tiếng Việt (Multilingual CLIP, 512D) + Trích xuất màu sắc (Center HSV 32D)
 5. System lưu record (kèm vector) vào DB, status LOST
 6. System kích hoạt auto-matching nền, trả kết quả
 
@@ -126,12 +126,12 @@ Use case gốc là tìm bằng text; 2 nhánh mở rộng (`<<extend>>`):
 **Fields (6):** image, keyword, location, dateFrom, dateTo, category
 **Transactions (7):**
 1. User upload ảnh + nhập filter
-2. System lấy vector từ embedding service
-3. System query pgvector theo image similarity
-4. System tính điểm location similarity
-5. System tính điểm time similarity
-6. System tính điểm text similarity & tổng hợp weighted score
-7. System trả kết quả xếp hạng theo final score
+2. System trích xuất đa phương thức: CLIP ViT-B/16 (ảnh), Multilingual CLIP (từ khóa tiếng Việt) và Center HSV (màu sắc)
+3. System query pgvector theo tương đồng thị giác
+4. System áp dụng Ràng buộc Nhân quả Thời gian (t_found >= t_lost - 1 ngày)
+5. System tính điểm không gian (Spatial Consistency) và đo màu sắc HSV (giải quyết mù màu)
+6. System áp dụng Thuật toán Trọng số Thích ứng Động (Dynamic Adaptive Weighting) + Bộ lọc Ngưỡng Thị giác Cứng (Visual Gating >= 0.55) + Phạt phi tuyến
+7. System trả kết quả xếp hạng theo final score (loại bỏ ứng viên vi phạm Gating)
 
 ---
 
@@ -236,7 +236,7 @@ Use case gốc là tìm bằng text; 2 nhánh mở rộng (`<<extend>>`):
 1. Admin chọn khoảng thời gian
 2. System truy vấn số lượng item theo trạng thái
 3. System tính peer resolution rate
-4. System tính Top-1/Top-5 Accuracy
+4. System tính độ chính xác thu hồi Top-1 / Top-3 Recall (Recall@1, Recall@3) và MRR (Mean Reciprocal Rank)
 5. System tổng hợp trả dữ liệu biểu đồ
 
 ---
@@ -245,8 +245,8 @@ Use case gốc là tìm bằng text; 2 nhánh mở rộng (`<<extend>>`):
 **Actor:** System | **Fields (1, internal):** itemId
 **Transactions (6):**
 1. System nhận sự kiện có bài đăng mới
-2. System gọi embedding service tính CLIP vector
-3. System query pgvector tìm ứng viên ngược chiều
-4. System tính multi-factor score
-5. System xếp hạng & lưu possible matches
+2. System gọi embedding service trích xuất đa phương thức (YOLOv8 Smart Crop + CLIP ViT-B/16 + Multilingual CLIP tiếng Việt + Center HSV)
+3. System query pgvector tìm ứng viên ngược chiều (Lost đối chiếu Found, Found đối chiếu Lost)
+4. System tính điểm theo Thuật toán Trọng số Thích ứng Động (Dynamic Adaptive Weighting) và kiểm tra Ràng buộc Nhân quả Thời gian & Địa lý
+5. System áp dụng Bộ lọc Ngưỡng Thị giác (Visual Gating >= 0.55) xếp hạng & lưu possible matches
 6. System tạo notification nếu vượt ngưỡng
