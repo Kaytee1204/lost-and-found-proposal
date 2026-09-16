@@ -1,0 +1,23 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary & OS files
+.DS_Store
+Thumbs.db
+*.tmp
+~$*
+
+# Excel files (Báo cáo nội bộ không đẩy lên Git)
+*.xlsx
+*.xls
+*.xlsm
+
+# Streamlit local credentials / cache
+.streamlit/

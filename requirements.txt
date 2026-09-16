@@ -1,0 +1,8 @@
+streamlit
+torch
+transformers
+pillow
+numpy
+ultralytics
+openpyxl
+sentence-transformers
