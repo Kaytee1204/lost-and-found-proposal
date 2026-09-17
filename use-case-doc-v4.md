@@ -239,14 +239,3 @@ Use case gốc là tìm bằng text; 2 nhánh mở rộng (`<<extend>>`):
 4. System tính độ chính xác thu hồi Top-1 / Top-3 Recall (Recall@1, Recall@3) và MRR (Mean Reciprocal Rank)
 5. System tổng hợp trả dữ liệu biểu đồ
 
----
-
-## 20. Hệ thống tự động matching (System-triggered)
-**Actor:** System | **Fields (1, internal):** itemId
-**Transactions (6):**
-1. System nhận sự kiện có bài đăng mới
-2. System gọi embedding service trích xuất đa phương thức (YOLOv8 Smart Crop + CLIP ViT-B/16 + Multilingual CLIP tiếng Việt + Center HSV)
-3. System query pgvector tìm ứng viên ngược chiều (Lost đối chiếu Found, Found đối chiếu Lost)
-4. System tính điểm theo Thuật toán Trọng số Thích ứng Động (Dynamic Adaptive Weighting) và kiểm tra Ràng buộc Nhân quả Thời gian & Địa lý
-5. System áp dụng Bộ lọc Ngưỡng Thị giác (Visual Gating >= 0.55) xếp hạng & lưu possible matches
-6. System tạo notification nếu vượt ngưỡng
