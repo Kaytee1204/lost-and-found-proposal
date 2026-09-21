@@ -1,0 +1,222 @@
+import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import {
+  UploadCloud, ArrowLeft, ArrowRight, ShieldCheck, CheckCircle,
+  AlertTriangle, Lock, FileText, Image as ImageIcon, Camera, X
+} from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+
+/* ===================================================
+   MOCKS
+=================================================== */
+const FOUND_ITEM = {
+  id: '1',
+  title: 'Ví da nam Pedro màu đen',
+  location: 'Toà H1, Đại học Bách Khoa Hà Nội',
+  finder: 'Thành viên uy tín'
+};
+
+export default function ClaimItemPage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    secretDetail: '',
+    proofImage: null,
+    contactInfo: '0912 345 678', // Auto-filled from profile
+    meetingPref: ''
+  });
+
+  const handleImageUpload = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const url = URL.createObjectURL(file);
+      setFormData({ ...formData, proofImage: url });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setStep(3); // Success step
+  };
+
+  return (
+    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+      <Navbar />
+
+      <main style={{ flex: 1, background: 'var(--bg-canvas)', padding: '60px 0 100px' }}>
+        <div className="container-sm">
+
+          {/* ── BREADCRUMB ── */}
+          <button
+            onClick={() => navigate(-1)}
+            className="btn btn-ghost"
+            style={{ marginBottom: '24px', paddingLeft: 0, color: 'var(--text-secondary)' }}
+          >
+            <ArrowLeft size={16} /> Quay lại chi tiết đồ vật
+          </button>
+
+          {/* ── HEADER ── */}
+          <div style={{ marginBottom: '40px' }}>
+            <h1 className="text-display-md" style={{ marginBottom: '8px' }}>Xác minh quyền sở hữu (Demo)</h1>
+            <p className="text-body" style={{ color: 'var(--text-secondary)' }}>
+              Để bảo vệ tài sản, bạn cần cung cấp bằng chứng chứng minh bạn là chủ nhân thực sự của món đồ
+              <strong style={{ color: 'var(--text-primary)' }}> {FOUND_ITEM.title}</strong>.
+            </p>
+          </div>
+
+          {step < 3 && (
+            <div className="card animate-fadeInUp" style={{ padding: '40px', boxShadow: 'var(--shadow-lg)' }}>
+
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '16px',
+                background: 'rgba(99,102,241,0.05)', padding: '20px',
+                borderRadius: 'var(--radius-lg)', marginBottom: '32px',
+                border: '1px solid rgba(99,102,241,0.2)'
+              }}>
+                <Lock size={24} style={{ color: 'var(--status-done)', flexShrink: 0 }} />
+                <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  <strong style={{ color: 'var(--text-primary)', display: 'block', marginBottom: '4px' }}>Bảo mật thông tin</strong>
+                  Thông tin xác minh của bạn chỉ được gửi đến <strong>{FOUND_ITEM.finder}</strong> (người nhặt). Hệ thống sẽ theo dõi quá trình để đảm bảo minh bạch.
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+
+                {/* 1. Secret Detail */}
+                <div className="input-group">
+                  <label className="input-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <FileText size={16} /> Đặc điểm nhận dạng bí mật <span style={{ color: 'var(--status-lost)' }}>*</span>
+                  </label>
+                  <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                    Hãy mô tả một chi tiết mà chỉ chủ nhân thực sự mới biết (VD: Số tiền chính xác trong ví, thẻ ngân hàng tên gì, đồ vật bị xước ở đâu...).
+                  </div>
+                  <textarea
+                    className="input"
+                    rows={4}
+                    placeholder="Nhập đặc điểm bí mật..."
+                    value={formData.secretDetail}
+                    onChange={e => setFormData({ ...formData, secretDetail: e.target.value })}
+                    required
+                  />
+                </div>
+
+                {/* 2. Proof Image */}
+                <div>
+                  <label className="input-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <ImageIcon size={16} /> Ảnh bằng chứng (Tuỳ chọn)
+                  </label>
+                  <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                    Ảnh chụp chung với đồ vật, ảnh hoá đơn mua hàng, hoặc ảnh đồ vật trước khi bị mất.
+                  </div>
+                  <div
+                    onClick={() => document.getElementById('proof-upload').click()}
+                    style={{
+                      border: '2px dashed var(--border-strong)', borderRadius: 'var(--radius-lg)',
+                      padding: formData.proofImage ? '12px' : '32px 20px', textAlign: 'center', cursor: 'pointer',
+                      background: 'var(--bg-canvas)', transition: 'all 200ms'
+                    }}
+                  >
+                    {formData.proofImage ? (
+                      <div style={{ position: 'relative', height: 160 }}>
+                        <img
+                          src={formData.proofImage}
+                          alt="Proof"
+                          style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 'var(--radius-md)' }}
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); setFormData({ ...formData, proofImage: null }); }}
+                          style={{
+                            position: 'absolute', top: 8, right: 8, width: 32, height: 32,
+                            borderRadius: '50%', background: 'rgba(0,0,0,0.6)', color: 'white',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer'
+                          }}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <Camera size={24} style={{ color: 'var(--text-muted)', margin: '0 auto 12px' }} />
+                        <div style={{ fontSize: '0.9375rem', fontWeight: 600, color: 'var(--text-primary)' }}>Tải ảnh lên</div>
+                      </>
+                    )}
+                    <input
+                      id="proof-upload"
+                      type="file"
+                      onChange={handleImageUpload}
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                    />
+                  </div>
+                </div>
+
+                {/* 3. Contact Info */}
+                <div className="input-group">
+                  <label className="input-label">Thông tin liên lạc</label>
+                  <input
+                    type="text"
+                    className="input"
+                    value={formData.contactInfo}
+                    readOnly
+                    style={{ background: 'var(--bg-canvas)', color: 'var(--text-secondary)' }}
+                  />
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '8px' }}>
+                    Sử dụng SĐT mặc định trong hồ sơ cá nhân.
+                  </div>
+                </div>
+
+                <div className="input-group">
+                  <label className="input-label">Thời gian / Địa điểm gặp mong muốn</label>
+                  <input
+                    type="text"
+                    className="input"
+                    placeholder="VD: Chiều nay sau 17h tại thư viện..."
+                    value={formData.meetingPref}
+                    onChange={e => setFormData({ ...formData, meetingPref: e.target.value })}
+                  />
+                </div>
+
+                <div style={{ paddingTop: '24px', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'flex-end' }}>
+                  <button type="submit" className="btn btn-primary btn-lg" style={{ background: 'var(--accent)' }}>
+                    Gửi yêu cầu xác minh <ArrowRight size={16} />
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* ── SUCCESS STEP ── */}
+          {step === 3 && (
+            <div className="card animate-scaleIn" style={{ padding: '60px 40px', textAlign: 'center', boxShadow: 'var(--shadow-lg)' }}>
+              <div style={{
+                width: 80, height: 80, borderRadius: '50%', background: 'var(--status-found-bg)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px'
+              }}>
+                <CheckCircle size={40} color="var(--status-found)" />
+              </div>
+              <h2 className="text-display-sm" style={{ marginBottom: '16px' }}>Đã gửi yêu cầu xác minh!</h2>
+              <p className="text-body" style={{ color: 'var(--text-secondary)', maxWidth: '400px', margin: '0 auto 32px' }}>
+                Yêu cầu của bạn đã được gửi tới người nhặt. Vui lòng theo dõi trạng thái tại mục <strong>Đơn xác minh của tôi</strong>. Hệ thống sẽ thông báo ngay khi có phản hồi.
+              </p>
+
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+                <button className="btn btn-outline" onClick={() => navigate('/')}>
+                  Về trang chủ
+                </button>
+                <button className="btn btn-primary" onClick={() => navigate('/quan-ly-claim')}>
+                  Xem đơn xác minh
+                </button>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
