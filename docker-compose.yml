@@ -1,0 +1,16 @@
+services:
+  sagasu:
+    image: postgres:latest
+    container_name: sagasu
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sagasu
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - sagasu_pgdata:/var/lib/postgresql
+
+volumes:
+  sagasu_pgdata:
