@@ -203,9 +203,9 @@ function PostsTab() {
       <div>
         {shown.map(post => <PostRow key={post.id} post={post} />)}
       </div>
-      <Link to="/tin-dang-cua-toi" className="btn btn-ghost"
+      <Link to="/bai-dang-cua-toi" className="btn btn-ghost"
         style={{ marginTop: '20px', width: 'fit-content' }}>
-        Xem tất cả tin đăng
+        Xem tất cả bài đăng
         <ArrowRight size={14} />
       </Link>
     </div>

@@ -30,21 +30,7 @@ const VneIDIcon = () => (
 
 /* === LEFT PANEL FEATURES === */
 const features = [
-  {
-    icon: '🔐',
-    title: 'Xác thực 2 lớp (2FA / OTP)',
-    desc: 'Mã hóa đa tầng, ngăn chặn giả mạo thông tin khi liên hệ nhận đồ.',
-  },
-  {
-    icon: '🤖',
-    title: 'AI đối soát vết xước & đặc điểm',
-    desc: 'Tự động so khớp hình ảnh và số serial độc quyền đạt 94.8%.',
-  },
-  {
-    icon: '🛡️',
-    title: 'Bảo mật mã số định danh ẩn danh',
-    desc: 'Trao đổi an toàn qua mã che giấu SĐT và dữ liệu cá nhân nhạy cảm.',
-  },
+
 ];
 
 /* ===================================================
@@ -398,38 +384,31 @@ export default function AuthPage() {
           }}>
             Nền tảng vì cộng đồng
           </div>
-          <h1 style={{
-            fontFamily: 'var(--font-display)', fontWeight: 800,
-            fontSize: 'clamp(1.75rem, 3vw, 2.25rem)',
-            lineHeight: 1.2, letterSpacing: '-0.02em',
-            color: 'white', marginBottom: '16px'
-          }}>
-            Bảo vệ thông tin,<br />kết nối lòng tốt.
-          </h1>
-          <p style={{
-            fontSize: '0.875rem', color: 'rgba(255,255,255,0.65)',
-            lineHeight: 1.7, marginBottom: '32px', maxWidth: '38ch'
-          }}>
-            Giải pháp số hóa toàn diện quy trình tiếp nhận, xác minh
-            quyền sở hữu và bàn giao an toàn vật phẩm thất lạc trong
-            học đường và đô thị.
-          </p>
-
-          {/* Feature list */}
-          <div className="feature-list">
-            {features.map((feat, i) => (
-              <div
-                key={i}
-                className="feature-item animate-fadeInUp"
-                style={{ animationDelay: `${i * 0.1}s` }}
-              >
-                <div className="feature-icon">{feat.icon}</div>
-                <div className="feature-content">
-                  <div className="feature-title">{feat.title}</div>
-                  <div className="feature-desc">{feat.desc}</div>
-                </div>
-              </div>
-            ))}
+          <div className="animated-text-container">
+            <h1 className="animated-text-item" style={{
+              fontFamily: 'var(--font-display)', fontWeight: 800,
+              fontSize: 'clamp(2.25rem, 4vw, 3.25rem)',
+              lineHeight: 1.2, letterSpacing: '-0.02em',
+              color: 'white', margin: 0
+            }}>
+              Bảo vệ thông tin,<br />kết nối lòng tốt.
+            </h1>
+            <h1 className="animated-text-item" style={{
+              fontFamily: 'var(--font-display)', fontWeight: 800,
+              fontSize: 'clamp(2.25rem, 4vw, 3.25rem)',
+              lineHeight: 1.2, letterSpacing: '-0.02em',
+              color: 'white', margin: 0
+            }}>
+              Tìm lại đồ thất lạc<br />nhẹ nhàng & an tâm.
+            </h1>
+            <h1 className="animated-text-item" style={{
+              fontFamily: 'var(--font-display)', fontWeight: 800,
+              fontSize: 'clamp(2.25rem, 4vw, 3.25rem)',
+              lineHeight: 1.2, letterSpacing: '-0.02em',
+              color: 'white', margin: 0
+            }}>
+              Cộng đồng văn minh,<br />chia sẻ trách nhiệm.
+            </h1>
           </div>
         </div>
 

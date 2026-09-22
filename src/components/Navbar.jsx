@@ -29,7 +29,7 @@ function AvatarDropdown({ onLogout }) {
 
   const menuItems = [
     { icon: User, label: 'Hồ sơ cá nhân', to: '/ho-so' },
-    { icon: FileText, label: 'Tin đăng của tôi', to: '/tin-dang-cua-toi' },
+    { icon: FileText, label: 'Bài đăng của tôi', to: '/bai-dang-cua-toi' },
     { icon: Settings, label: 'Cài đặt tài khoản', to: '/cai-dat' },
   ];
 
@@ -183,6 +183,11 @@ export default function Navbar({ isLoggedIn = true }) {
           <li>
             <Link to="/tim-kiem" className={`nav-link ${isActive('/tim-kiem') ? 'active' : ''}`}>
               Tìm kiếm
+            </Link>
+          </li>
+          <li>
+            <Link to="/bai-dang-cua-toi" className={`nav-link ${isActive('/bai-dang-cua-toi') ? 'active' : ''}`}>
+              Bài đăng của tôi
             </Link>
           </li>
           <li>

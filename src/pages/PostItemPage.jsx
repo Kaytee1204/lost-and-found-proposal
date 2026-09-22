@@ -66,8 +66,7 @@ export default function PostItemPage() {
   const [postType, setPostType] = useState('lost'); // 'lost' | 'found'
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
-    image: null,
-    category: '',
+    images: [],
     itemName: '',
     description: '',
     date: '',
@@ -81,15 +80,24 @@ export default function PostItemPage() {
   const steps = ['Hình ảnh', 'Thông tin', 'Hoàn tất'];
 
   const handleImageUpload = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const url = URL.createObjectURL(file);
-      setFormData({ ...formData, image: url });
-      // Simulate auto-detecting category based on AI Vision
-      setTimeout(() => {
-        setFormData(prev => ({ ...prev, category: 'Ví & Giấy tờ' }));
-      }, 1000);
+    if (e.target.files && e.target.files.length > 0) {
+      const newFiles = Array.from(e.target.files);
+      const totalImages = formData.images.length + newFiles.length;
+      if (totalImages > 5) {
+        alert("Bạn chỉ được tải lên tối đa 5 ảnh.");
+        return;
+      }
+      const newUrls = newFiles.map(file => URL.createObjectURL(file));
+      setFormData({ ...formData, images: [...formData.images, ...newUrls] });
     }
+  };
+
+  const handleRemoveImage = (indexToRemove, e) => {
+    e.stopPropagation();
+    setFormData({
+      ...formData,
+      images: formData.images.filter((_, idx) => idx !== indexToRemove)
+    });
   };
 
   const handleNext = () => {
@@ -164,88 +172,74 @@ export default function PostItemPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                 <div>
                   <label className="input-label" style={{ marginBottom: '12px', display: 'block', fontSize: '1rem' }}>
-                    Tải lên hình ảnh vật phẩm
+                    Tải lên hình ảnh vật phẩm ({formData.images.length}/5)
                   </label>
-                  <div 
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{
-                      border: '2px dashed var(--accent)', borderRadius: 'var(--radius-2xl)',
-                      padding: '48px 24px', textAlign: 'center', cursor: 'pointer',
-                      background: formData.image ? 'black' : 'var(--teal-50)',
-                      position: 'relative', overflow: 'hidden',
-                      transition: 'all 200ms'
-                    }}
-                  >
-                    {formData.image ? (
-                      <>
-                        <img 
-                          src={formData.image} 
-                          alt="Preview" 
-                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', opacity: 0.8 }} 
-                        />
-                        <div style={{ position: 'absolute', top: 16, right: 16 }}>
+                  
+                  {/* Lưới ảnh đã tải lên */}
+                  {formData.images.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+                      {formData.images.map((imgSrc, idx) => (
+                        <div key={idx} style={{ 
+                          position: 'relative', width: '100px', height: '100px', 
+                          borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+                          border: '1px solid var(--border)'
+                        }}>
+                          <img src={imgSrc} alt={`Preview ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                           <button 
-                            onClick={(e) => { e.stopPropagation(); setFormData({ ...formData, image: null }); }}
+                            onClick={(e) => handleRemoveImage(idx, e)}
                             style={{ 
-                              width: 32, height: 32, borderRadius: '50%', background: 'rgba(0,0,0,0.5)',
+                              position: 'absolute', top: 4, right: 4,
+                              width: 24, height: 24, borderRadius: '50%', background: 'rgba(0,0,0,0.6)',
                               color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                               border: 'none', cursor: 'pointer'
                             }}
                           >
-                            <X size={16} />
+                            <X size={12} />
                           </button>
                         </div>
-                        {/* Scanning effect simulated */}
-                        <div style={{
-                          position: 'absolute', top: 0, left: 0, right: 0, height: '4px',
-                          background: 'var(--status-found)',
-                          boxShadow: '0 0 20px var(--status-found)',
-                          animation: 'scanline 2s infinite linear'
-                        }} />
-                      </>
-                    ) : (
-                      <>
-                        <div style={{ 
-                          width: 64, height: 64, borderRadius: '50%', background: 'white',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          margin: '0 auto 16px', color: 'var(--accent)',
-                          boxShadow: '0 8px 24px rgba(30,107,107,0.1)'
-                        }}>
-                          <Camera size={28} />
-                        </div>
-                        <div style={{ fontWeight: 600, fontSize: '1.0625rem', color: 'var(--accent)', marginBottom: '8px' }}>
-                          Bấm hoặc Kéo thả ảnh vào đây
-                        </div>
-                        <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                          Định dạng JPG, PNG. Tối đa 5MB.
-                        </div>
-                      </>
-                    )}
-                    <input 
-                      type="file" 
-                      ref={fileInputRef} 
-                      onChange={handleImageUpload} 
-                      accept="image/*" 
-                      style={{ display: 'none' }} 
-                    />
-                  </div>
-                </div>
+                      ))}
+                    </div>
+                  )}
 
-                <div className="input-group">
-                  <label className="input-label" style={{ fontSize: '1rem' }}>Danh mục AI dự đoán</label>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' }}>
-                    {CATEGORIES.map(cat => (
-                      <button
-                        key={cat}
-                        onClick={() => setFormData({ ...formData, category: cat })}
-                        type="button"
-                        className={`chip ${formData.category === cat ? 'active' : ''}`}
-                        style={{ padding: '8px 16px', fontSize: '0.875rem' }}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
+                  {/* Vùng tải ảnh (chỉ hiện khi chưa đủ 5 ảnh) */}
+                  {formData.images.length < 5 && (
+                    <div 
+                      onClick={() => fileInputRef.current?.click()}
+                      style={{
+                        border: '2px dashed var(--accent)', borderRadius: 'var(--radius-xl)',
+                        padding: formData.images.length === 0 ? '48px 24px' : '24px', 
+                        textAlign: 'center', cursor: 'pointer',
+                        background: 'var(--teal-50)',
+                        position: 'relative', overflow: 'hidden',
+                        transition: 'all 200ms'
+                      }}
+                    >
+                      <div style={{ 
+                        width: formData.images.length === 0 ? 64 : 40, 
+                        height: formData.images.length === 0 ? 64 : 40, 
+                        borderRadius: '50%', background: 'white',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        margin: '0 auto 12px', color: 'var(--accent)',
+                        boxShadow: '0 4px 12px rgba(30,107,107,0.1)'
+                      }}>
+                        <Camera size={formData.images.length === 0 ? 28 : 20} />
+                      </div>
+                      <div style={{ fontWeight: 600, fontSize: formData.images.length === 0 ? '1.0625rem' : '0.9375rem', color: 'var(--accent)', marginBottom: '8px' }}>
+                        {formData.images.length === 0 ? 'Bấm hoặc Kéo thả ảnh vào đây' : 'Thêm ảnh khác'}
+                      </div>
+                      <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
+                        Định dạng JPG, PNG. Tối đa 5MB.
+                      </div>
+                      <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        onChange={handleImageUpload} 
+                        accept="image/*"
+                        multiple
+                        style={{ display: 'none' }} 
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -363,7 +357,7 @@ export default function PostItemPage() {
 
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
                   <img 
-                    src={formData.image || 'https://images.unsplash.com/photo-1627123424574-724758594913?w=300&q=80'} 
+                    src={formData.images[0] || 'https://images.unsplash.com/photo-1627123424574-724758594913?w=300&q=80'} 
                     alt="Preview"
                     style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}
                   />
@@ -375,7 +369,6 @@ export default function PostItemPage() {
                       <span className={`badge ${postType === 'lost' ? 'badge-lost' : 'badge-found'}`}>
                         {postType === 'lost' ? 'Cần tìm' : 'Nhặt được'}
                       </span>
-                      <span className="badge badge-accent">{formData.category || 'Danh mục'}</span>
                     </div>
                     <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -405,19 +398,27 @@ export default function PostItemPage() {
                 <button 
                   className="btn btn-primary" 
                   onClick={handleNext}
-                  disabled={step === 0 && !formData.image}
+                  disabled={step === 0 && formData.images.length === 0}
                 >
                   Tiếp tục <ArrowRight size={16} />
                 </button>
               ) : (
-                <Link 
-                  to="/smart-match"
-                  className="btn btn-primary" 
-                  onClick={() => console.log('Navigating to smart match')}
-                  style={{ background: 'var(--status-found)', color: 'white', textDecoration: 'none' }}
-                >
-                  <CheckCircle size={16} /> Đăng tin ngay
-                </Link>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <Link 
+                    to="/ca-nhan"
+                    className="btn btn-ghost"
+                    style={{ textDecoration: 'none', borderColor: 'var(--border-strong)', color: 'var(--text-primary)' }}
+                  >
+                    Chỉ đăng tin thường
+                  </Link>
+                  <Link 
+                    to="/smart-match"
+                    className="btn btn-primary" 
+                    style={{ background: 'var(--status-found)', color: 'white', textDecoration: 'none' }}
+                  >
+                    <CheckCircle size={16} /> Đăng & Quét AI
+                  </Link>
+                </div>
               )}
             </div>
             

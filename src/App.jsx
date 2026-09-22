@@ -6,6 +6,7 @@ import PostItemPage from './pages/PostItemPage';
 import SearchPage from './pages/SearchPage';
 import ItemDetailPage from './pages/ItemDetailPage';
 import SmartMatchPage from './pages/SmartMatchPage';
+import MyPostsPage from './pages/MyPostsPage';
 import ClaimItemPage from './pages/ClaimItemPage';
 
 export default function App() {
@@ -21,7 +22,8 @@ export default function App() {
         <Route path="/smart-match" element={<SmartMatchPage />} />
         <Route path="/xac-minh/:id" element={<ClaimItemPage />} />
         <Route path="/ho-so" element={<ProfilePage />} />
-        <Route path="/tin-dang-cua-toi" element={<ProfilePage />} />
+        <Route path="/tin-dang-cua-toi" element={<MyPostsPage />} />
+        <Route path="/bai-dang-cua-toi" element={<MyPostsPage />} />
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   MapPin, Calendar, Clock, AlertTriangle, ChevronRight, 
-  ShieldCheck, Share2, Flag, User, Info, CheckCircle, Image as ImageIcon, ArrowRight
+  ShieldCheck, Share2, Flag, User, Info, CheckCircle, Image as ImageIcon, ArrowRight, Sparkles
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -47,6 +47,8 @@ const ITEM = {
 export default function ItemDetailPage() {
   const { id } = useParams();
   const [activeImage, setActiveImage] = useState(0);
+  const [isOwner] = useState(true); // mock: chủ bài đăng
+  const navigate = useNavigate();
 
   return (
     <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
@@ -261,6 +263,28 @@ export default function ItemDetailPage() {
               marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--border)',
               display: 'flex', flexDirection: 'column', gap: '12px'
             }}>
+              {/* Nút Quét AI — chỉ hiện với chủ bài đăng */}
+              {isOwner && (
+                <button
+                  onClick={() => navigate('/smart-match')}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                    width: '100%', padding: '14px 24px',
+                    borderRadius: 'var(--radius-xl)',
+                    background: 'linear-gradient(135deg, var(--teal-800), var(--teal-600))',
+                    color: 'white', border: 'none', cursor: 'pointer',
+                    fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.9375rem',
+                    boxShadow: '0 4px 16px rgba(30,107,107,0.3)',
+                    transition: 'all 200ms',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(30,107,107,0.4)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(30,107,107,0.3)'; }}
+                >
+                  <Sparkles size={18} />
+                  Kích hoạt AI Smart Match
+                </button>
+              )}
+
               <Link 
                 to={`/xac-minh/${ITEM.id}`}
                 className="btn btn-primary btn-full btn-lg" 

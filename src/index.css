@@ -772,10 +772,12 @@ body {
 .auth-page {
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr;
 }
 .auth-panel-left {
-  background: linear-gradient(160deg, var(--teal-900) 0%, var(--teal-700) 50%, var(--teal-800) 100%);
+  background: linear-gradient(-45deg, var(--teal-900), var(--teal-700), var(--teal-600), var(--teal-800));
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -1087,3 +1089,34 @@ body {
   0%, 100% { transform: scale(1); opacity: 1; }
   50%       { transform: scale(1.5); opacity: 0.6; }
 }
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes slideUpFade {
+  0% { opacity: 0; transform: translateY(20px); }
+  5% { opacity: 1; transform: translateY(0); }
+  28% { opacity: 1; transform: translateY(0); }
+  33% { opacity: 0; transform: translateY(-20px); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+.animated-text-container {
+  height: 160px; /* Tăng chiều cao để tránh cắt chữ lớn hơn */
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-text-item {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  animation: slideUpFade 9s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animated-text-item:nth-child(1) { animation-delay: 0s; }
+.animated-text-item:nth-child(2) { animation-delay: 3s; }
+.animated-text-item:nth-child(3) { animation-delay: 6s; }
