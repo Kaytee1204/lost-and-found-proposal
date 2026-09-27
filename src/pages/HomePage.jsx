@@ -411,8 +411,8 @@ export default function HomePage() {
                     transition: 'all 200ms',
                     gap: '12px'
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'var(--teal-50)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-canvas)'; }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'var(--teal-50)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-canvas)'; }}
                   >
                     <div>
                       <div style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-primary)', marginBottom: '3px' }}>{c.name}</div>
@@ -533,8 +533,8 @@ export default function HomePage() {
                     borderRight: i < 3 ? 'none' : '1px solid var(--border)',
                     position: 'relative', zIndex: 1,
                     borderRadius: i === 0 ? 'var(--radius-xl) 0 0 var(--radius-xl)'
-                                : i === 3 ? '0 var(--radius-xl) var(--radius-xl) 0'
-                                : '0',
+                      : i === 3 ? '0 var(--radius-xl) var(--radius-xl) 0'
+                        : '0',
                     transition: 'all 250ms',
                   }}
                   onMouseEnter={e => {
@@ -553,7 +553,7 @@ export default function HomePage() {
                     e.currentTarget.style.border = '1px solid var(--border)';
                     e.currentTarget.style.borderRight = i < 3 ? 'none' : '1px solid var(--border)';
                     e.currentTarget.style.borderRadius = i === 0 ? 'var(--radius-xl) 0 0 var(--radius-xl)'
-                                : i === 3 ? '0 var(--radius-xl) var(--radius-xl) 0' : '0';
+                      : i === 3 ? '0 var(--radius-xl) var(--radius-xl) 0' : '0';
                   }}
                 >
                   {/* Step icon circle */}
@@ -644,8 +644,8 @@ export default function HomePage() {
                   <Plus size={16} />
                   Đăng tin thất lạc
                 </Link>
-                <Link to="/tim-do-that-lac" className="btn btn-outline-white" id="cta-browse-btn">
-                  Duyệt kho đồ nhặt được
+                <Link to="/tim-kiem" className="btn btn-outline-white" id="cta-browse-btn">
+                  Tìm kiếm bài đăng hiện có
                 </Link>
               </div>
             </div>
@@ -686,7 +686,7 @@ export default function HomePage() {
                 thông tin cá nhân và trao gửi đúng chủ sở hữu.
               </p>
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
-                <Link to="/dang-tin-nhat-duoc" className="btn btn-accent btn-lg" id="cta-found-btn">
+                <Link to="/dang-tin?type=found" className="btn btn-accent btn-lg" id="cta-found-btn">
                   <Plus size={16} />
                   Đăng tin nhặt được
                 </Link>

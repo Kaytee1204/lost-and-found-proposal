@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import {
   UploadCloud, MapPin, Tag, Box, Search, Camera,
   CheckCircle, AlertTriangle, ArrowRight, ArrowLeft,
@@ -63,7 +63,24 @@ function StepIndicator({ currentStep, steps }) {
 }
 
 export default function PostItemPage() {
-  const [postType, setPostType] = useState('lost'); // 'lost' | 'found'
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  const isFoundParam = 
+    searchParams.get('type') === 'found' || 
+    location.state?.type === 'found' || 
+    location.pathname === '/dang-tin-nhat-duoc';
+
+  const [postType, setPostType] = useState(isFoundParam ? 'found' : 'lost');
+
+  useEffect(() => {
+    const isFound = 
+      searchParams.get('type') === 'found' || 
+      location.state?.type === 'found' || 
+      location.pathname === '/dang-tin-nhat-duoc';
+
+    setPostType(isFound ? 'found' : 'lost');
+  }, [searchParams, location.state, location.pathname]);
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
     images: [],
@@ -76,7 +93,7 @@ export default function PostItemPage() {
 
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  
+
   const steps = ['Hình ảnh', 'Thông tin', 'Hoàn tất'];
 
   const handleImageUpload = (e) => {
@@ -115,7 +132,7 @@ export default function PostItemPage() {
 
       <main style={{ flex: 1, background: 'var(--bg-canvas)', padding: '60px 0 100px' }}>
         <div className="container-sm">
-          
+
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
             <h1 className="text-display-lg" style={{ marginBottom: '8px' }}>Đăng tin vật phẩm</h1>
@@ -125,8 +142,8 @@ export default function PostItemPage() {
           </div>
 
           {/* Type selector */}
-          <div style={{ 
-            display: 'flex', background: 'var(--bg-surface)', padding: '6px', 
+          <div style={{
+            display: 'flex', background: 'var(--bg-surface)', padding: '6px',
             borderRadius: 'var(--radius-xl)', border: '1px solid var(--border)',
             marginBottom: '40px', boxShadow: 'var(--shadow-sm)'
           }}>
@@ -166,7 +183,7 @@ export default function PostItemPage() {
 
           {/* Form Card */}
           <div className="card animate-fadeInUp" style={{ padding: '40px', boxShadow: 'var(--shadow-lg)' }}>
-            
+
             {/* STEP 0: IMAGE & CATEGORY */}
             {step === 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
@@ -174,20 +191,20 @@ export default function PostItemPage() {
                   <label className="input-label" style={{ marginBottom: '12px', display: 'block', fontSize: '1rem' }}>
                     Tải lên hình ảnh vật phẩm ({formData.images.length}/5)
                   </label>
-                  
+
                   {/* Lưới ảnh đã tải lên */}
                   {formData.images.length > 0 && (
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
                       {formData.images.map((imgSrc, idx) => (
-                        <div key={idx} style={{ 
-                          position: 'relative', width: '100px', height: '100px', 
+                        <div key={idx} style={{
+                          position: 'relative', width: '100px', height: '100px',
                           borderRadius: 'var(--radius-lg)', overflow: 'hidden',
                           border: '1px solid var(--border)'
                         }}>
                           <img src={imgSrc} alt={`Preview ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          <button 
+                          <button
                             onClick={(e) => handleRemoveImage(idx, e)}
-                            style={{ 
+                            style={{
                               position: 'absolute', top: 4, right: 4,
                               width: 24, height: 24, borderRadius: '50%', background: 'rgba(0,0,0,0.6)',
                               color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -203,20 +220,20 @@ export default function PostItemPage() {
 
                   {/* Vùng tải ảnh (chỉ hiện khi chưa đủ 5 ảnh) */}
                   {formData.images.length < 5 && (
-                    <div 
+                    <div
                       onClick={() => fileInputRef.current?.click()}
                       style={{
                         border: '2px dashed var(--accent)', borderRadius: 'var(--radius-xl)',
-                        padding: formData.images.length === 0 ? '48px 24px' : '24px', 
+                        padding: formData.images.length === 0 ? '48px 24px' : '24px',
                         textAlign: 'center', cursor: 'pointer',
                         background: 'var(--teal-50)',
                         position: 'relative', overflow: 'hidden',
                         transition: 'all 200ms'
                       }}
                     >
-                      <div style={{ 
-                        width: formData.images.length === 0 ? 64 : 40, 
-                        height: formData.images.length === 0 ? 64 : 40, 
+                      <div style={{
+                        width: formData.images.length === 0 ? 64 : 40,
+                        height: formData.images.length === 0 ? 64 : 40,
                         borderRadius: '50%', background: 'white',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         margin: '0 auto 12px', color: 'var(--accent)',
@@ -230,13 +247,13 @@ export default function PostItemPage() {
                       <div style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
                         Định dạng JPG, PNG. Tối đa 5MB.
                       </div>
-                      <input 
-                        type="file" 
-                        ref={fileInputRef} 
-                        onChange={handleImageUpload} 
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleImageUpload}
                         accept="image/*"
                         multiple
-                        style={{ display: 'none' }} 
+                        style={{ display: 'none' }}
                       />
                     </div>
                   )}
@@ -302,14 +319,14 @@ export default function PostItemPage() {
                     />
                   </div>
                   {/* Fake map UI snippet */}
-                  <div style={{ 
+                  <div style={{
                     height: '160px', background: 'var(--zinc-100)', borderRadius: 'var(--radius-lg)',
                     marginTop: '8px', border: '1px solid var(--border)', display: 'flex',
                     alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)',
                     position: 'relative', overflow: 'hidden'
                   }}>
-                    <img 
-                      src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80" 
+                    <img
+                      src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80"
                       alt="Map"
                       style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.5 }}
                     />
@@ -340,7 +357,7 @@ export default function PostItemPage() {
             {/* STEP 2: REVIEW */}
             {step === 2 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div style={{ 
+                <div style={{
                   background: 'var(--status-done-bg)', border: '1px solid rgba(99,102,241,0.2)',
                   borderRadius: 'var(--radius-lg)', padding: '20px', display: 'flex', gap: '16px'
                 }}>
@@ -356,8 +373,8 @@ export default function PostItemPage() {
                 </div>
 
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
-                  <img 
-                    src={formData.images[0] || 'https://images.unsplash.com/photo-1627123424574-724758594913?w=300&q=80'} 
+                  <img
+                    src={formData.images[0] || 'https://images.unsplash.com/photo-1627123424574-724758594913?w=300&q=80'}
                     alt="Preview"
                     style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)' }}
                   />
@@ -386,17 +403,17 @@ export default function PostItemPage() {
             {/* Navigation Buttons */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '40px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
               {step > 0 ? (
-                <button 
-                  className="btn btn-ghost" 
+                <button
+                  className="btn btn-ghost"
                   onClick={() => setStep(step - 1)}
                 >
                   <ArrowLeft size={16} /> Quay lại
                 </button>
               ) : <div />}
-              
+
               {step < steps.length - 1 ? (
-                <button 
-                  className="btn btn-primary" 
+                <button
+                  className="btn btn-primary"
                   onClick={handleNext}
                   disabled={step === 0 && formData.images.length === 0}
                 >
@@ -404,16 +421,16 @@ export default function PostItemPage() {
                 </button>
               ) : (
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <Link 
+                  <Link
                     to="/ca-nhan"
                     className="btn btn-ghost"
                     style={{ textDecoration: 'none', borderColor: 'var(--border-strong)', color: 'var(--text-primary)' }}
                   >
                     Chỉ đăng tin thường
                   </Link>
-                  <Link 
+                  <Link
                     to="/smart-match"
-                    className="btn btn-primary" 
+                    className="btn btn-primary"
                     style={{ background: 'var(--status-found)', color: 'white', textDecoration: 'none' }}
                   >
                     <CheckCircle size={16} /> Đăng & Quét AI
@@ -421,13 +438,13 @@ export default function PostItemPage() {
                 </div>
               )}
             </div>
-            
+
           </div>
         </div>
       </main>
 
       <Footer />
-      
+
       {/* Add a scanline animation dynamically */}
       <style>{`
         @keyframes scanline {

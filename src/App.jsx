@@ -8,6 +8,12 @@ import ItemDetailPage from './pages/ItemDetailPage';
 import SmartMatchPage from './pages/SmartMatchPage';
 import MyPostsPage from './pages/MyPostsPage';
 import ClaimItemPage from './pages/ClaimItemPage';
+import AdminLayout from './layouts/AdminLayout';
+import AdminOverviewPage from './pages/admin/AdminOverviewPage';
+import AdminItemsPage from './pages/admin/AdminItemsPage';
+import AdminReportsPage from './pages/admin/AdminReportsPage';
+import AdminUsersPage from './pages/admin/AdminUsersPage';
+import AdminUserDetailsPage from './pages/admin/AdminUserDetailsPage';
 
 export default function App() {
   return (
@@ -17,6 +23,7 @@ export default function App() {
         <Route path="/dang-nhap" element={<AuthPage />} />
         <Route path="/dang-ky" element={<AuthPage />} />
         <Route path="/dang-tin" element={<PostItemPage />} />
+        <Route path="/dang-tin-nhat-duoc" element={<PostItemPage />} />
         <Route path="/tim-kiem" element={<SearchPage />} />
         <Route path="/chi-tiet/:id" element={<ItemDetailPage />} />
         <Route path="/smart-match" element={<SmartMatchPage />} />
@@ -24,6 +31,16 @@ export default function App() {
         <Route path="/ho-so" element={<ProfilePage />} />
         <Route path="/tin-dang-cua-toi" element={<MyPostsPage />} />
         <Route path="/bai-dang-cua-toi" element={<MyPostsPage />} />
+        {/* Admin Nested Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminOverviewPage />} />
+          <Route path="items" element={<AdminItemsPage />} />
+          <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="users/:id" element={<AdminUserDetailsPage />} />
+        </Route>
+
+        <Route path="/quan-tri" element={<Navigate to="/admin" replace />} />
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

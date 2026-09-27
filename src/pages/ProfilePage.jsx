@@ -10,27 +10,8 @@ import {
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
-/* ════════════════════════════════════════════════
-   MOCK DATA
-════════════════════════════════════════════════ */
-const USER = {
-  name: 'Nguyễn Văn An',
+import { CURRENT_USER as USER } from './admin/mockData';
 
-  email: 'an.nguyen@gmail.com',
-  phone: '0912 345 678',
-  job: 'Kỹ sư Phần mềm',
-  address: 'Hai Bà Trưng, Hà Nội',
-  joinDate: 'Tháng 9, 2023',
-  verified: true,
-  twoFA: true,
-  avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=NVA&backgroundColor=1e6b6b&textColor=ffffff',
-  stats: [
-    { label: 'Tin đã đăng', value: '12', sub: 'tổng cộng', icon: FileText },
-    { label: 'Đã trao trả', value: '7', sub: 'thành công', icon: CheckCircle },
-    { label: 'Đang xử lý', value: '3', sub: 'chờ xác minh', icon: Clock },
-    { label: 'Điểm uy tín', value: '4.9', sub: '/ 5.0', icon: Star },
-  ],
-};
 
 const MY_POSTS = [
   {

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Search, Bell, Plus, LogOut, User, Settings, FileText, ChevronDown } from 'lucide-react';
+import { Search, Bell, Plus, LogOut, User, Settings, FileText, ChevronDown, LayoutDashboard } from 'lucide-react';
 
 const ShieldIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -9,11 +9,13 @@ const ShieldIcon = () => (
   </svg>
 );
 
-/* ── AVATAR DROPDOWN ── */
 function AvatarDropdown({ onLogout }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const navigate = useNavigate();
+
+  // MOCK: Đang giả lập user đăng nhập có quyền admin
+  const isAdmin = true;
 
   // Close on outside click
   useEffect(() => {
@@ -30,8 +32,11 @@ function AvatarDropdown({ onLogout }) {
   const menuItems = [
     { icon: User, label: 'Hồ sơ cá nhân', to: '/ho-so' },
     { icon: FileText, label: 'Bài đăng của tôi', to: '/bai-dang-cua-toi' },
-    { icon: Settings, label: 'Cài đặt tài khoản', to: '/cai-dat' },
   ];
+
+  if (isAdmin) {
+    menuItems.push({ icon: LayoutDashboard, label: 'Trang quản trị', to: '/admin' });
+  }
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
@@ -185,16 +190,8 @@ export default function Navbar({ isLoggedIn = true }) {
               Tìm kiếm
             </Link>
           </li>
-          <li>
-            <Link to="/bai-dang-cua-toi" className={`nav-link ${isActive('/bai-dang-cua-toi') ? 'active' : ''}`}>
-              Bài đăng của tôi
-            </Link>
-          </li>
-          <li>
-            <Link to="/dang-tin" className={`nav-link ${isActive('/dang-tin') ? 'active' : ''}`}>
-              Đăng tin
-            </Link>
-          </li>
+
+
         </ul>
 
         {/* Actions */}
