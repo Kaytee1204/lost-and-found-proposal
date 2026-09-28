@@ -1,16 +1,11 @@
+@import "tailwindcss";
+
 /* ================================================
    TIMDO DESIGN SYSTEM — Global CSS
    Lost & Found Platform — CapStone v2.4
    Colors: Dark Teal + White + Slate
 ================================================ */
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
 
 :root {
   /* === BRAND COLORS === */
