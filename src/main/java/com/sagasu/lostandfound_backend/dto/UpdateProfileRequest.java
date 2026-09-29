@@ -13,4 +13,9 @@ public class UpdateProfileRequest {
     private String fullName;
     private String phone;
     private String avatarUrl;
+    private String address;
+    private String bio;
+    private Boolean notifyByEmail;
+    private Boolean notifyByPush;
+    private String preferredLanguage;
 }

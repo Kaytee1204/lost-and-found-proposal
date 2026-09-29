@@ -21,6 +21,11 @@ public class UserResponse {
     private String fullName;
     private String phone;
     private String avatarUrl;
+    private String address;
+    private String bio;
+    private Boolean notifyByEmail;
+    private Boolean notifyByPush;
+    private String preferredLanguage;
     private Role role;
     private UserStatus status;
     private Instant createdAt;
@@ -33,6 +38,11 @@ public class UserResponse {
                 .fullName(user.getFullName())
                 .phone(user.getPhone())
                 .avatarUrl(user.getAvatarUrl())
+                .address(user.getAddress())
+                .bio(user.getBio())
+                .notifyByEmail(user.getNotifyByEmail())
+                .notifyByPush(user.getNotifyByPush())
+                .preferredLanguage(user.getPreferredLanguage())
                 .role(user.getRole())
                 .status(user.getStatus())
                 .createdAt(user.getCreatedAt())

@@ -5,10 +5,18 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.TimeZone;
+
 import javax.sql.DataSource;
 
 @Configuration
 public class FlywayConfig {
+
+    static {
+        if ("Asia/Saigon".equals(TimeZone.getDefault().getID())) {
+            TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+        }
+    }
 
     @Bean
     public Flyway flyway(DataSource dataSource) {
@@ -16,12 +24,9 @@ public class FlywayConfig {
                 .dataSource(dataSource)
                 .locations("classpath:db/migration")
                 .baselineOnMigrate(true)
-                .cleanDisabled(false)
+                .cleanDisabled(true)
                 .load();
 
-        // Tự động xóa sạch toàn bộ DB (clean) và chạy lại migration từ đầu (migrate)
-        // mỗi khi ứng dụng khởi động lại, giúp dữ liệu luôn được reset về seed data ban đầu.
-        flyway.clean();
         flyway.migrate();
         return flyway;
     }

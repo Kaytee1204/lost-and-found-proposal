@@ -9,6 +9,7 @@ import com.sagasu.lostandfound_backend.dto.UserResponse;
 import com.sagasu.lostandfound_backend.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Lấy thông tin tài khoản hiện tại", description = "Xem profile người dùng đang đăng nhập qua token")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
         UUID currentUserId = SecurityUtils.getCurrentUserId();

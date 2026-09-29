@@ -21,7 +21,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String phone;
 
     private String email;
@@ -34,6 +34,23 @@ public class User {
 
     @Column(name = "avatar_url")
     private String avatarUrl;
+
+    private String address;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
+    @Builder.Default
+    @Column(name = "notify_by_email", nullable = false)
+    private Boolean notifyByEmail = true;
+
+    @Builder.Default
+    @Column(name = "notify_by_push", nullable = false)
+    private Boolean notifyByPush = false;
+
+    @Builder.Default
+    @Column(name = "preferred_language", nullable = false)
+    private String preferredLanguage = "vi";
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -52,4 +69,7 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
 }

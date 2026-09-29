@@ -29,6 +29,12 @@ public class ItemResponse {
     private String brand;
     private String size;
     private String material;
+    private String itemCondition;
+    private String provinceCode;
+    private String wardCode;
+    private String addressDetail;
+    private Double lat;
+    private Double lng;
     private String location;
     private LocalDate eventDate;
     private LocalTime eventTime;
@@ -52,6 +58,12 @@ public class ItemResponse {
                 .brand(item.getBrand())
                 .size(item.getSize())
                 .material(item.getMaterial())
+                .itemCondition(item.getItemCondition())
+                .provinceCode(item.getProvinceCode())
+                .wardCode(item.getWardCode())
+                .addressDetail(item.getAddressDetail())
+                .lat(item.getLat())
+                .lng(item.getLng())
                 .location(item.getLocation())
                 .eventDate(item.getEventDate())
                 .eventTime(item.getEventTime())

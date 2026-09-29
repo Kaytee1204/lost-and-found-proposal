@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -28,19 +29,22 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        if (userRepository.existsByPhone(request.getPhone())) {
+        String phone = normalize(request.getPhone());
+        String email = normalizeEmail(request.getEmail());
+        if (phone == null && email == null) {
+            throw new AppException(ErrorCode.BAD_REQUEST);
+        }
+        if (phone != null && userRepository.existsByPhone(phone)) {
             throw new AppException(ErrorCode.PHONE_ALREADY_EXISTS);
         }
 
-        if (request.getEmail() != null && !request.getEmail().isBlank()) {
-            if (userRepository.existsByEmail(request.getEmail().trim())) {
-                throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
-            }
+        if (email != null && userRepository.existsByEmailIgnoreCase(email)) {
+            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         User user = User.builder()
-                .phone(request.getPhone().trim())
-                .email(request.getEmail() != null ? request.getEmail().trim() : null)
+                .phone(phone)
+                .email(email)
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .fullName(request.getFullName().trim())
                 .role(Role.ROLE_USER)
@@ -58,14 +62,19 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByPhone(request.getPhone().trim())
+        String email = normalizeEmail(request.getEmail());
+        String phone = normalize(request.getPhone());
+        if (email == null && phone == null) {
+            throw new AppException(ErrorCode.INVALID_CREDENTIALS);
+        }
+        User user = (email != null ? userRepository.findByEmailIgnoreCase(email) : userRepository.findByPhone(phone))
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_CREDENTIALS));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new AppException(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        if (user.getStatus() == UserStatus.LOCKED) {
+        if (user.getStatus() != UserStatus.ACTIVE || user.getDeletedAt() != null) {
             throw new AppException(ErrorCode.FORBIDDEN, "Tài khoản của bạn đã bị khóa");
         }
 
@@ -81,6 +90,18 @@ public class AuthService {
     public UserResponse getCurrentUser(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        if (user.getStatus() != UserStatus.ACTIVE || user.getDeletedAt() != null) {
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
         return UserResponse.from(user);
+    }
+
+    private String normalize(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
+    }
+
+    private String normalizeEmail(String value) {
+        String normalized = normalize(value);
+        return normalized == null ? null : normalized.toLowerCase(Locale.ROOT);
     }
 }

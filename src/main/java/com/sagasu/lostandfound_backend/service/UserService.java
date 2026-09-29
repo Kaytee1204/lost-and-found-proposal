@@ -28,10 +28,24 @@ public class UserService {
             user.setFullName(request.getFullName().trim());
         }
         if (request.getPhone() != null) {
-            user.setPhone(request.getPhone().trim());
+            String phone = request.getPhone().trim();
+            if (phone.isEmpty() && (user.getEmail() == null || user.getEmail().isBlank())) {
+                throw new AppException(ErrorCode.BAD_REQUEST);
+            }
+            if (!phone.isEmpty() && !phone.equals(user.getPhone()) && userRepository.existsByPhone(phone)) {
+                throw new AppException(ErrorCode.PHONE_ALREADY_EXISTS);
+            }
+            user.setPhone(phone.isEmpty() ? null : phone);
         }
         if (request.getAvatarUrl() != null) {
             user.setAvatarUrl(request.getAvatarUrl().trim());
+        }
+        if (request.getAddress() != null) user.setAddress(request.getAddress().trim());
+        if (request.getBio() != null) user.setBio(request.getBio().trim());
+        if (request.getNotifyByEmail() != null) user.setNotifyByEmail(request.getNotifyByEmail());
+        if (request.getNotifyByPush() != null) user.setNotifyByPush(request.getNotifyByPush());
+        if (request.getPreferredLanguage() != null && !request.getPreferredLanguage().isBlank()) {
+            user.setPreferredLanguage(request.getPreferredLanguage().trim());
         }
 
         User updated = userRepository.save(user);

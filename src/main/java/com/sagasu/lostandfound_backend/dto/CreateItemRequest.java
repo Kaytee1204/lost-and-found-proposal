@@ -26,6 +26,12 @@ public class CreateItemRequest {
     private String brand;
     private String size;
     private String material;
+    private String itemCondition;
+    private String provinceCode;
+    private String wardCode;
+    private String addressDetail;
+    private Double lat;
+    private Double lng;
 
     private String location;
 

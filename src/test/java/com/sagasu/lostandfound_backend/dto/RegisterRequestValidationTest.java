@@ -35,6 +35,21 @@ class RegisterRequestValidationTest {
                 .build();
     }
 
+    @Test
+    void emailOnlyRegistrationIsValid() {
+        RegisterRequest request = createValidRequest();
+        request.setPhone(null);
+        assertTrue(validator.validate(request).isEmpty());
+    }
+
+    @Test
+    void registrationNeedsPhoneOrEmail() {
+        RegisterRequest request = createValidRequest();
+        request.setPhone(null);
+        request.setEmail(null);
+        assertFalse(validator.validate(request).isEmpty());
+    }
+
     @Nested
     @DisplayName("Phone Validation Tests")
     class PhoneValidationTests {

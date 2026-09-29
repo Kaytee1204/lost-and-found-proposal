@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CloseItemRequest {
     @Builder.Default
-    private ItemStatus status = ItemStatus.RETURNED;
+    private ItemStatus status = ItemStatus.CLOSED;
     private String reason;
 }

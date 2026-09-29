@@ -48,6 +48,24 @@ public class Item {
 
     private String material;
 
+    @Column(name = "item_condition")
+    private String itemCondition;
+
+    @Column(name = "province_code")
+    private String provinceCode;
+
+    @Column(name = "ward_code")
+    private String wardCode;
+
+    @Column(name = "address_detail")
+    private String addressDetail;
+
+    private Double lat;
+    private Double lng;
+
+    @Column(name = "coordinate_source")
+    private String coordinateSource;
+
     @Column(name = "location")
     private String location;
 

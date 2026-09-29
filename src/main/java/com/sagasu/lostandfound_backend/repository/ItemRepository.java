@@ -8,8 +8,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
+import java.util.List;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, UUID>, JpaSpecificationExecutor<Item> {
     Page<Item> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
+    List<Item> findByUserId(UUID userId);
 }

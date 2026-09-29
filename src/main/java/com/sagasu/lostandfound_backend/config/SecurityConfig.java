@@ -40,6 +40,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/items/my-posts").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/items/**").permitAll()
                         .anyRequest().authenticated()
                 )

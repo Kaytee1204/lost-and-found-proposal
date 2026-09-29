@@ -1,6 +1,6 @@
 services:
   sagasu:
-    image: postgres:latest
+    image: ${SAGASU_POSTGRES_IMAGE:-pgvector/pgvector:pg18-trixie}
     container_name: sagasu
     restart: unless-stopped
     environment:
@@ -11,6 +11,19 @@ services:
       - "5432:5432"
     volumes:
       - sagasu_pgdata:/var/lib/postgresql
+
+  backend:
+    profiles: ["app"]
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://sagasu:5432/sagasu
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET:-sagasu-lost-and-found-super-secret-key-that-is-at-least-256-bits-long-2026}
+    depends_on:
+      - sagasu
 
 volumes:
   sagasu_pgdata:

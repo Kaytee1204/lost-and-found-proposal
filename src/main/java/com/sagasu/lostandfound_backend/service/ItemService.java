@@ -3,6 +3,7 @@ package com.sagasu.lostandfound_backend.service;
 import com.sagasu.lostandfound_backend.common.api.PageResponse;
 import com.sagasu.lostandfound_backend.common.exception.AppException;
 import com.sagasu.lostandfound_backend.common.exception.ErrorCode;
+import com.sagasu.lostandfound_backend.common.util.ImageLink;
 import com.sagasu.lostandfound_backend.dto.CloseItemRequest;
 import com.sagasu.lostandfound_backend.dto.CreateItemRequest;
 import com.sagasu.lostandfound_backend.dto.ItemResponse;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +44,7 @@ public class ItemService {
     }
 
     private ItemResponse createItem(UUID userId, CreateItemRequest request, ItemType type, ItemStatus status) {
+        validateLocation(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
@@ -55,17 +58,71 @@ public class ItemService {
                 .brand(request.getBrand())
                 .size(request.getSize())
                 .material(request.getMaterial())
+                .itemCondition(type == ItemType.FOUND ? request.getItemCondition() : null)
+                .provinceCode(request.getProvinceCode())
+                .wardCode(request.getWardCode())
+                .addressDetail(request.getAddressDetail())
+                .lat(request.getLat())
+                .lng(request.getLng())
+                .coordinateSource(request.getLat() == null ? null : "PIN")
                 .location(request.getLocation())
                 .eventDate(request.getEventDate())
                 .eventTime(request.getEventTime())
-                .imageUrl(request.getImageUrl())
+                .imageUrl(ImageLink.validate(request.getImageUrl()))
                 .additionalCharacteristics(request.getAdditionalCharacteristics())
                 .contactPhone(request.getContactPhone() != null ? request.getContactPhone() : user.getPhone())
                 .status(status)
                 .build();
 
-        Item saved = itemRepository.save(item);
-        return ItemResponse.from(saved);
+        return ItemResponse.from(itemRepository.save(item));
+    }
+
+    @Transactional
+    public ItemResponse updateItem(UUID userId, UUID itemId, CreateItemRequest request) {
+        validateLocation(request);
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new AppException(ErrorCode.ITEM_NOT_FOUND));
+        if (!item.getUser().getId().equals(userId)) {
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
+        if (item.getStatus() == ItemStatus.CLOSED || item.getStatus() == ItemStatus.RETURNED
+                || item.getStatus() == ItemStatus.CLAIM_PENDING || item.getStatus() == ItemStatus.IN_DISCUSSION) {
+            throw new AppException(ErrorCode.INVALID_STATE_TRANSITION);
+        }
+        item.setItemName(request.getItemName());
+        item.setCategory(request.getCategory());
+        item.setDescription(request.getDescription());
+        item.setColor(request.getColor());
+        item.setBrand(request.getBrand());
+        item.setSize(request.getSize());
+        item.setMaterial(request.getMaterial());
+        item.setItemCondition(item.getItemType() == ItemType.FOUND ? request.getItemCondition() : null);
+        item.setLocation(request.getLocation());
+        item.setProvinceCode(request.getProvinceCode());
+        item.setWardCode(request.getWardCode());
+        item.setAddressDetail(request.getAddressDetail());
+        item.setLat(request.getLat());
+        item.setLng(request.getLng());
+        item.setCoordinateSource(request.getLat() == null ? null : "PIN");
+        item.setEventDate(request.getEventDate());
+        item.setEventTime(request.getEventTime());
+        item.setImageUrl(ImageLink.validate(request.getImageUrl()));
+        item.setAdditionalCharacteristics(request.getAdditionalCharacteristics());
+        item.setContactPhone(request.getContactPhone());
+        return ItemResponse.from(itemRepository.save(item));
+    }
+
+    private void validateLocation(CreateItemRequest request) {
+        if ((request.getLat() == null) != (request.getLng() == null)) {
+            throw new AppException(ErrorCode.BAD_REQUEST, "Latitude and longitude must be provided together");
+        }
+        if (request.getLat() != null && (request.getLat() < -90 || request.getLat() > 90
+                || request.getLng() < -180 || request.getLng() > 180)) {
+            throw new AppException(ErrorCode.BAD_REQUEST, "Invalid coordinates");
+        }
+        if (request.getWardCode() != null && request.getProvinceCode() == null) {
+            throw new AppException(ErrorCode.BAD_REQUEST, "A ward requires a province");
+        }
     }
 
     public ItemResponse getItemById(UUID id) {
@@ -79,6 +136,9 @@ public class ItemService {
             ItemStatus status,
             String category,
             String keyword,
+            String provinceCode,
+            LocalDate fromDate,
+            LocalDate toDate,
             Pageable pageable
     ) {
         Specification<Item> spec = (root, query, cb) -> {
@@ -93,6 +153,11 @@ public class ItemService {
             if (category != null && !category.isBlank()) {
                 predicates.add(cb.equal(cb.lower(root.get("category")), category.toLowerCase().trim()));
             }
+            if (provinceCode != null && !provinceCode.isBlank()) {
+                predicates.add(cb.equal(root.get("provinceCode"), provinceCode.trim()));
+            }
+            if (fromDate != null) predicates.add(cb.greaterThanOrEqualTo(root.get("eventDate"), fromDate));
+            if (toDate != null) predicates.add(cb.lessThanOrEqualTo(root.get("eventDate"), toDate));
             if (keyword != null && !keyword.isBlank()) {
                 String likePattern = "%" + keyword.toLowerCase().trim() + "%";
                 Predicate nameMatch = cb.like(cb.lower(root.get("itemName")), likePattern);
@@ -125,7 +190,13 @@ public class ItemService {
 
         ItemStatus targetStatus = (request != null && request.getStatus() != null)
                 ? request.getStatus()
-                : ItemStatus.RETURNED;
+                : ItemStatus.CLOSED;
+
+        if (targetStatus != ItemStatus.CLOSED || item.getStatus() == ItemStatus.CLOSED
+                || item.getStatus() == ItemStatus.RETURNED || item.getStatus() == ItemStatus.CLAIM_PENDING
+                || item.getStatus() == ItemStatus.IN_DISCUSSION) {
+            throw new AppException(ErrorCode.INVALID_STATE_TRANSITION);
+        }
 
         item.setStatus(targetStatus);
         Item updated = itemRepository.save(item);

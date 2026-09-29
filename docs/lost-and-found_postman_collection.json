@@ -1,44 +1,104 @@
 {
   "info": {
-    "name": "Lost & Found MVP API",
-    "description": "Bộ sưu tập API cho hệ thống Lost & Found Backend (Spring Boot MVP)",
+    "name": "Lost & Found MVP API (current)",
+    "description": "Run folders in order. Uses external HTTPS image URLs and no AI endpoints. See docs/POSTMAN_TEST_GUIDE.md.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8080",
-      "type": "string"
+      "value": "http://localhost:8080"
     },
     {
-      "key": "token",
-      "value": "",
-      "type": "string"
+      "key": "runId",
+      "value": ""
     },
     {
-      "key": "createdItemId",
-      "value": "",
-      "type": "string"
+      "key": "eventDate",
+      "value": ""
+    },
+    {
+      "key": "ownerToken",
+      "value": ""
+    },
+    {
+      "key": "finderToken",
+      "value": ""
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "ownerId",
+      "value": ""
+    },
+    {
+      "key": "finderId",
+      "value": ""
+    },
+    {
+      "key": "lostItemId",
+      "value": ""
+    },
+    {
+      "key": "foundItemId",
+      "value": ""
+    },
+    {
+      "key": "claimId",
+      "value": ""
+    },
+    {
+      "key": "roomId",
+      "value": ""
+    },
+    {
+      "key": "reportId",
+      "value": ""
+    },
+    {
+      "key": "notificationId",
+      "value": ""
+    },
+    {
+      "key": "adminPhone",
+      "value": "0987654321"
+    },
+    {
+      "key": "adminPassword",
+      "value": "admin"
     }
   ],
   "item": [
     {
-      "name": "1. Authentication",
+      "name": "1. Accounts",
       "item": [
         {
-          "name": "1.1 Login (User mặc định)",
+          "name": "01 Register owner",
           "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const runId = Date.now().toString(36);",
+                  "pm.collectionVariables.set('runId', runId);",
+                  "pm.collectionVariables.set('eventDate', new Date().toISOString().slice(0, 10));"
+                ]
+              }
+            },
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.data && jsonData.data.token) {",
-                  "    pm.collectionVariables.set('token', jsonData.data.token);",
-                  "    console.log('JWT Token saved successfully!');",
-                  "}"
-                ],
-                "type": "text/javascript"
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set('ownerToken', json.data.token);",
+                  "pm.collectionVariables.set('ownerId', json.data.user.id);"
+                ]
               }
             }
           ],
@@ -50,32 +110,32 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{baseUrl}}/api/v1/auth/register",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"phone\": \"0912345678\",\n  \"password\": \"user\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "auth", "login"]
-            },
-            "description": "Đăng nhập bằng số điện thoại và mật khẩu. Tự động lưu JWT Token vào biến collection {{token}}."
+              "raw": "{\n  \"fullName\": \"Postman Owner\",\n  \"email\": \"owner-{{runId}}@example.com\",\n  \"password\": \"Password@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
           }
         },
         {
-          "name": "1.2 Login (Admin mặc định)",
+          "name": "02 Register finder",
           "event": [
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.data && jsonData.data.token) {",
-                  "    pm.collectionVariables.set('token', jsonData.data.token);",
-                  "    console.log('Admin JWT Token saved!');",
-                  "}"
-                ],
-                "type": "text/javascript"
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set('finderToken', json.data.token);",
+                  "pm.collectionVariables.set('finderId', json.data.user.id);"
+                ]
               }
             }
           ],
@@ -87,104 +147,872 @@
                 "value": "application/json"
               }
             ],
+            "url": "{{baseUrl}}/api/v1/auth/register",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"phone\": \"0987654321\",\n  \"password\": \"admin\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "auth", "login"]
-            }
-          }
-        },
-        {
-          "name": "1.3 Register (Đăng ký tài khoản mới)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
+              "raw": "{\n  \"fullName\": \"Postman Finder\",\n  \"email\": \"finder-{{runId}}@example.com\",\n  \"password\": \"Password@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
               }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Nguyen Van A\",\n  \"phone\": \"0933445566\",\n  \"password\": \"Password@123\",\n  \"email\": \"nguyenvana@gmail.com\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "auth", "register"]
             }
           }
         },
         {
-          "name": "1.4 Get Current User (/me)",
+          "name": "03 Current owner",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.expect(json.data.id).to.eql(pm.collectionVariables.get('ownerId'));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{ownerToken}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/auth/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "auth", "me"]
-            }
+            "url": "{{baseUrl}}/api/v1/auth/me"
           }
-        }
-      ]
-    },
-    {
-      "name": "2. Users Profile",
-      "item": [
+        },
         {
-          "name": "2.1 Update Profile",
+          "name": "04 Update owner profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
               },
               {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "key": "Content-Type",
+                "value": "application/json"
               }
             ],
+            "url": "{{baseUrl}}/api/v1/users/profile",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"fullName\": \"Nguyen Van A Updated\",\n  \"phone\": \"0912345678\",\n  \"avatarUrl\": \"https://example.com/avatar.jpg\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/users/profile",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "users", "profile"]
+              "raw": "{\n  \"fullName\": \"Postman Owner Updated\",\n  \"bio\": \"Postman MVP test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           }
         }
       ]
     },
     {
-      "name": "3. Items Management",
+      "name": "2. Posts and text search",
       "item": [
         {
-          "name": "3.1 Create Lost Item (Báo mất đồ)",
+          "name": "05 Create Lost post",
           "event": [
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.data && jsonData.data.id) {",
-                  "    pm.collectionVariables.set('createdItemId', jsonData.data.id);",
-                  "    console.log('Saved createdItemId:', jsonData.data.id);",
-                  "}"
-                ],
-                "type": "text/javascript"
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set('lostItemId', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/items/lost",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"Black wallet {{runId}}\",\n  \"category\": \"Wallet\",\n  \"description\": \"Black leather wallet with a blue lining\",\n  \"color\": \"Black\",\n  \"location\": \"Campus library\",\n  \"eventDate\": \"{{eventDate}}\",\n  \"imageUrl\": \"https://example.com/items/wallet-{{runId}}.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "06 Create Found post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set('foundItemId', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{finderToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/items/found",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"Black wallet {{runId}}\",\n  \"category\": \"Wallet\",\n  \"description\": \"Black leather wallet with a blue lining\",\n  \"color\": \"Black\",\n  \"location\": \"Campus library\",\n  \"eventDate\": \"{{eventDate}}\",\n  \"imageUrl\": \"https://example.com/items/wallet-{{runId}}.jpg\",\n  \"itemCondition\": \"USED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "07 Edit Found post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{finderToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/items/{{foundItemId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemName\": \"Black wallet {{runId}}\",\n  \"category\": \"Wallet\",\n  \"description\": \"Black leather wallet with a blue lining\",\n  \"color\": \"Black\",\n  \"location\": \"Campus library\",\n  \"eventDate\": \"{{eventDate}}\",\n  \"imageUrl\": \"https://example.com/items/wallet-{{runId}}.jpg\",\n  \"itemCondition\": \"GOOD\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "08 Browse Found posts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/items?type=FOUND&keyword=wallet&page=0&size=10"
+          }
+        },
+        {
+          "name": "09 Text search",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/search/text",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"keyword\": \"Black wallet\",\n  \"type\": \"FOUND\",\n  \"page\": 0,\n  \"size\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "10 My posts (owner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/items/my-posts?page=0&size=10"
+          }
+        },
+        {
+          "name": "11 Found post detail",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/items/{{foundItemId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Claim verification",
+      "item": [
+        {
+          "name": "12 Submit claim",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set('claimId', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/items/{{foundItemId}}/claims",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lostItemId\": \"{{lostItemId}}\",\n  \"identifyingDetails\": \"Blue lining in the inner pocket\",\n  \"evidenceImageUrl\": \"https://example.com/evidence/{{runId}}.jpg\",\n  \"note\": \"I lost this at the library\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "13 Claims received (finder)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{finderToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/claims/received"
+          }
+        },
+        {
+          "name": "14 Request more information",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{finderToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/claims/{{claimId}}/respond",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"REQUEST_MORE_INFO\",\n  \"responseNote\": \"What is inside the wallet?\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "15 Supply more information",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/claims/{{claimId}}/info",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"A blue library card\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "16 Read claim information",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{finderToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/claims/{{claimId}}/info"
+          }
+        },
+        {
+          "name": "17 Approve claim",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.expect(json.data.status).to.eql('APPROVED');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{finderToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/claims/{{claimId}}/respond",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"APPROVED\",\n  \"responseNote\": \"Details match\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "18 Claim detail (owner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/claims/{{claimId}}"
+          }
+        },
+        {
+          "name": "19 Claims sent (owner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/claims/sent"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Chat and handover",
+      "item": [
+        {
+          "name": "20 List chat rooms",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/chat/rooms",
+            "body": {
+              "mode": "raw",
+              "raw": "\"const room = json.data.find(r => r.claimId === pm.collectionVariables.get('claimId'));\\npm.expect(room).to.exist;\\npm.collectionVariables.set('roomId', room.id);\"",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "21 Send message",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/chat/rooms/{{roomId}}/messages",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Let's meet at the library front desk\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "22 Message history (finder)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{finderToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/chat/rooms/{{roomId}}/messages"
+          }
+        },
+        {
+          "name": "23 Propose handover (finder)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{finderToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/claims/{{claimId}}/handover/propose",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "24 Confirm handover (owner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.expect(json.data.status).to.eql('CONFIRMED');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/claims/{{claimId}}/handover/confirm",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "25 Check Returned post",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/items/{{foundItemId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "\"pm.expect(json.data.status).to.eql('RETURNED');\"",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Reports, admin, notifications",
+      "item": [
+        {
+          "name": "26 Submit report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set('reportId', json.data.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/reports",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetType\": \"USER\",\n  \"targetId\": \"{{finderId}}\",\n  \"reason\": \"POSTMAN_TEST\",\n  \"description\": \"Test report for the Postman walkthrough\",\n  \"evidenceImageUrl\": \"https://example.com/evidence/{{runId}}.jpg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "27 Admin login (local seed)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.collectionVariables.set('adminToken', json.data.token);"
+                ]
               }
             }
           ],
@@ -194,153 +1022,176 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
               }
             ],
+            "url": "{{baseUrl}}/api/v1/auth/login",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"itemName\": \"Ví da nam cầm tay màu nâu\",\n  \"category\": \"Ví / Giấy tờ\",\n  \"description\": \"Đánh rơi ví da màu nâu bên trong có CCCD và thẻ ngân hàng\",\n  \"color\": \"Nâu\",\n  \"brand\": \"Pedro\",\n  \"size\": \"Nhỏ\",\n  \"material\": \"Da bò\",\n  \"location\": \"Căn tin tòa nhà A, Đại học FPT\",\n  \"eventDate\": \"2026-09-20\",\n  \"eventTime\": \"14:30:00\",\n  \"imageUrl\": \"https://example.com/item.jpg\",\n  \"additionalCharacteristics\": \"Có vết xước nhỏ ở góc phải mặt sau\",\n  \"contactPhone\": \"0912345678\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/items/lost",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "items", "lost"]
-            }
-          }
-        },
-        {
-          "name": "3.2 Create Found Item (Báo nhặt được đồ)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"itemName\": \"Chùm chìa khóa xe máy Honda\",\n  \"category\": \"Chìa khóa\",\n  \"description\": \"Nhặt được chùm 3 chìa khóa có móc treo hình gấu Doraemon\",\n  \"color\": \"Bạc\",\n  \"brand\": \"Honda\",\n  \"location\": \"Bãi giữ xe khu B\",\n  \"eventDate\": \"2026-09-20\",\n  \"eventTime\": \"16:00:00\",\n  \"imageUrl\": \"https://example.com/keys.jpg\",\n  \"contactPhone\": \"0912345678\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/items/found",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "items", "found"]
-            }
-          }
-        },
-        {
-          "name": "3.3 Get Items List (Tìm kiếm & Lọc)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/items?keyword=ví&type=LOST&page=0&size=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "items"],
-              "query": [
-                {
-                  "key": "keyword",
-                  "value": "ví",
-                  "description": "Từ khóa tìm kiếm (tên, mô tả, địa điểm)"
-                },
-                {
-                  "key": "type",
-                  "value": "LOST",
-                  "description": "LOST hoặc FOUND"
-                },
-                {
-                  "key": "status",
-                  "value": "LOST",
-                  "disabled": true,
-                  "description": "LOST, FOUND, RETURNED, CLOSED"
-                },
-                {
-                  "key": "category",
-                  "value": "Ví / Giấy tờ",
-                  "disabled": true
-                },
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "10"
+              "raw": "{\n  \"phone\": \"{{adminPhone}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
                 }
-              ]
+              }
             }
           }
         },
         {
-          "name": "3.4 Get Item By ID",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/items/{{createdItemId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "items", "{{createdItemId}}"]
+          "name": "28 Pending reports (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
             }
-          }
-        },
-        {
-          "name": "3.5 Get My Items (Bài đăng của tôi)",
+          ],
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "value": "Bearer {{adminToken}}"
               }
             ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/items/my-posts?page=0&size=10",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "items", "my-posts"],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "10"
-                }
-              ]
-            }
+            "url": "{{baseUrl}}/api/v1/admin/reports"
           }
         },
         {
-          "name": "3.6 Close Item (Đóng / Đã nhận lại đồ)",
+          "name": "29 Dismiss test report (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.expect(json.data.status).to.eql('DISMISSED');"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PATCH",
             "header": [
               {
-                "key": "Content-Type",
-                "value": "application/json"
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
               },
               {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
+                "key": "Content-Type",
+                "value": "application/json"
               }
             ],
+            "url": "{{baseUrl}}/api/v1/admin/reports/{{reportId}}/resolve",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"status\": \"RETURNED\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/items/{{createdItemId}}/close",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "items", "{{createdItemId}}", "close"]
+              "raw": "{\n  \"action\": \"DISMISS\",\n  \"adminNote\": \"Postman walkthrough\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
+          }
+        },
+        {
+          "name": "30 Dashboard (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/dashboard"
+          }
+        },
+        {
+          "name": "31 Owner notifications",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/notifications",
+            "body": {
+              "mode": "raw",
+              "raw": "\"pm.expect(json.data.length).to.be.greaterThan(0);\\npm.collectionVariables.set('notificationId', json.data[0].id);\"",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "32 Mark notification read",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.test(\"API success\", function () { pm.expect(json.success).to.eql(true); });",
+                  "pm.expect(json.data.read).to.eql(true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{ownerToken}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/notifications/{{notificationId}}/read"
           }
         }
       ]

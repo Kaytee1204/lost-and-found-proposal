@@ -1,5 +1,7 @@
 package com.sagasu.lostandfound_backend.config;
 
+import com.sagasu.lostandfound_backend.entity.UserStatus;
+import com.sagasu.lostandfound_backend.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(
@@ -33,15 +36,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(token) && jwtService.validateToken(token)) {
             UUID userId = jwtService.extractUserId(token);
-            String role = jwtService.extractRole(token);
-
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userId.toString(),
-                    null,
-                    Collections.singletonList(new SimpleGrantedAuthority(role))
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            userRepository.findById(userId)
+                    .filter(user -> user.getStatus() == UserStatus.ACTIVE && user.getDeletedAt() == null)
+                    .ifPresent(user -> {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                userId.toString(),
+                                null,
+                                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()))
+                        );
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    });
         }
 
         filterChain.doFilter(request, response);
